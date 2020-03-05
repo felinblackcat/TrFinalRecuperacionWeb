@@ -50,5 +50,3 @@ class WebScraping:
     def CrawlingLinksHost2(self):
         return(True)
 
-Evaluador = WebScraping()
-Evaluador.scrapingLinkHost1()
