@@ -56,7 +56,7 @@ class TelevisoreswalmartSpider(scrapy.Spider):
         Televisor = BotItem()
         Televisor["Modelo"] = datos2.find('div',class_='valign-middle secondary-info-margin-right copy-mini display-inline-block other-info').text.strip().split("Model: ")[1]
         Televisor["Marca"] = datos2.find('div',class_='valign-middle secondary-info-margin-right copy-mini display-inline-block').a.span.text.strip()
-        Televisor["Precio"] = BeautifulSoup(res.text, 'html5lib').find('div',class_='prod-PriceHero').find('span',class_='hide-content display-inline-block-m').find('span',class_='price display-inline-block arrange-fit price price--stylized').find('span',class_='visuallyhidden').text.strip().split('$')[1]
+        Televisor["Precio"] = float(BeautifulSoup(res.text, 'html5lib').find('div',class_='prod-PriceHero').find('span',class_='hide-content display-inline-block-m').find('span',class_='price display-inline-block arrange-fit price price--stylized').find('span',class_='visuallyhidden').text.strip().split('$')[1])
         
         for caracteristica in caracteristicas:
             dato = caracteristica.find('div',class_='SpecHighlights-list-item')
@@ -71,7 +71,7 @@ class TelevisoreswalmartSpider(scrapy.Spider):
             elif(label=="Display Technology"):
                 Televisor["TipoDisplay"]=valor
             
-        print(Televisor["TamañoPantalla"]+"\t\t"+Televisor["Resolucion"]+"\t\t"+Televisor["TipoDisplay"]+"\t\t"+Televisor["Modelo"]+"\t\t"+Televisor["Marca"]+"\t\t"+Televisor["Precio"])
+        print(Televisor["TamañoPantalla"]+"\t\t"+Televisor["Resolucion"]+"\t\t"+Televisor["TipoDisplay"]+"\t\t"+Televisor["Modelo"]+"\t\t"+Televisor["Marca"]+"\t\t"+str(Televisor["Precio"]))
             
               
         
