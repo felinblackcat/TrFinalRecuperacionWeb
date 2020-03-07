@@ -6,7 +6,7 @@ import requests
 import html5lib
 import scrapy
 from bs4 import BeautifulSoup
-from televisor import televisor
+
 
 
 class WebScraping:
@@ -28,25 +28,11 @@ class WebScraping:
         
         for Pagina in range(int(NumPaginas)+1):
             ListaCrawling.append('https://www.walmart.com/browse/tv-video/all-tvs/3944_1060825_447913/?page='+str(Pagina))
-                
-        '''
-        Busqueda = parser.find('div',class_='search-product-result').find('ul',class_='search-result-gridview-items four-items').find_all('li')
-        print(len(Busqueda))
-        for resultado in Busqueda:
-            
-            title = resultado.find('div',class_='search-result-product-title gridview').find('a',class_='product-title-link line-clamp line-clamp-2') 
-            url = title['href']
-            
-            print(self.HOST1+url)
         
-        '''
-        return(ListaCrawling)
-    def CrawlingLinksHost1(self):
-        return(True)
+        return(ListaCrawling)   
         
     def scrapingLinkHost2(self):
         return(True)
         
-    def CrawlingLinksHost2(self):
-        return(True)
+    
 

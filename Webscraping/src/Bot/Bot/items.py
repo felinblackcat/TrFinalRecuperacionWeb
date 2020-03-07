@@ -11,4 +11,12 @@ import scrapy
 class BotItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
+    Modelo = scrapy.Field()    
+    Marca = scrapy.Field()
+    Precio = scrapy.Field()
+    TamañoPantalla = scrapy.Field()
+    Resolucion = scrapy.Field()
+    TipoDisplay = scrapy.Field()
+    url = scrapy.Field()  
+    
     pass
