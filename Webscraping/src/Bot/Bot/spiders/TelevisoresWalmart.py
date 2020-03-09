@@ -50,28 +50,40 @@ class TelevisoreswalmartSpider(scrapy.Spider):
         
         pass
 
-    def TelevisionData(self,res):      
-        caracteristicas = BeautifulSoup(res.text, 'html5lib').find('div',class_='SpecHighlights-container').ul.find_all('li')
-        datos2 = BeautifulSoup(res.text, 'html5lib').find('div',class_='hf-Bot').find('div',class_='prod-productsecondaryinformation display-inline-block prod-SecondaryInfo')
+    def TelevisionData(self,res):     
         Televisor = BotItem()
-        Televisor["Modelo"] = datos2.find('div',class_='valign-middle secondary-info-margin-right copy-mini display-inline-block other-info').text.strip().split("Model: ")[1]
-        Televisor["Marca"] = datos2.find('div',class_='valign-middle secondary-info-margin-right copy-mini display-inline-block').a.span.text.strip()
-        Televisor["Precio"] = float(BeautifulSoup(res.text, 'html5lib').find('div',class_='prod-PriceHero').find('span',class_='hide-content display-inline-block-m').find('span',class_='price display-inline-block arrange-fit price price--stylized').find('span',class_='visuallyhidden').text.strip().split('$')[1])
-        
-        for caracteristica in caracteristicas:
-            dato = caracteristica.find('div',class_='SpecHighlights-list-item')
-            label = dato.find('div',class_='SpecHighlights-list-label').text.strip()
-            valor = dato.find('div',class_='SpecHighlights-list-value').text.strip()
-            if(label=="Screen Size"):
-                Televisor["TamañoPantalla"]=valor
-                
-            elif(label=="Resolution"):
-                Televisor["Resolucion"]=valor
-                
-            elif(label=="Display Technology"):
-                Televisor["TipoDisplay"]=valor
+        try:
+            caracteristicas = BeautifulSoup(res.text, 'html5lib').find('div',class_='SpecHighlights-container').find('ul',class_='SpecHighlights-list Grid text-left').find_all('li',class_='Grid-col u-size-12-12-xs u-size-6-12-s u-size-4-12-m text-center')
             
-        print(Televisor["TamañoPantalla"]+"\t\t"+Televisor["Resolucion"]+"\t\t"+Televisor["TipoDisplay"]+"\t\t"+Televisor["Modelo"]+"\t\t"+Televisor["Marca"]+"\t\t"+str(Televisor["Precio"]))
+            for caracteristica in caracteristicas:
+                dato = caracteristica.find('div',class_='SpecHighlights-list-item')
+                label = dato.find('div',class_='SpecHighlights-list-label').text.strip()
+                valor = dato.find('div',class_='SpecHighlights-list-value').text.strip()
+                if(label=="Screen Size"):
+                    Televisor["TamañoPantalla"]=valor.split('"')[0]
+                    
+                elif(label=="Resolution"):
+                    Televisor["Resolucion"]=valor
+                    
+                elif(label=="Display Technology"):
+                    Televisor["TipoDisplay"]=valor  
+                    
+            datos2 = BeautifulSoup(res.text, 'html5lib').find('div',class_='hf-Bot').find('div',class_='prod-productsecondaryinformation display-inline-block prod-SecondaryInfo')
+            Televisor["Modelo"] = datos2.find('div',class_='valign-middle secondary-info-margin-right copy-mini display-inline-block other-info').text.strip().split("Model: ")[1]
+            Televisor["Marca"] = datos2.find('div',class_='valign-middle secondary-info-margin-right copy-mini display-inline-block').a.span.text.strip()
+            Televisor["Precio"] = float(BeautifulSoup(res.text, 'html5lib').find('div',class_='prod-PriceHero').find('span',class_='hide-content display-inline-block-m').find('span',class_='price display-inline-block arrange-fit price price--stylized').find('span',class_='visuallyhidden').text.strip().split('$')[1])
+                       
+        except:
+            Televisor["TamañoPantalla"]=''
+            Televisor["Resolucion"]=''
+            Televisor["TipoDisplay"]=''
+            Televisor["Modelo"] = ''
+            Televisor["Marca"] = ''
+            Televisor["Precio"] = ''
+            
+        
+        return Televisor    
+        
             
               
         

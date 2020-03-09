@@ -17,6 +17,7 @@ class BotItem(scrapy.Item):
     TamañoPantalla = scrapy.Field()
     Resolucion = scrapy.Field()
     TipoDisplay = scrapy.Field()
+    Calificacion = scrapy.Field()
     url = scrapy.Field()  
     
     pass
