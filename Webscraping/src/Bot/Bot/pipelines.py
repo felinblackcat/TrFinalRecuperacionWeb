@@ -4,14 +4,14 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-import MySQLdb
+import psycopg2
 
 class BotPipeline(object):
     
         
     
     def open_spider(self, spider):
-        self.db_connection=MySQLdb.connect("localhost","root","","WebScraping")
+        self.db_connection= psycopg2.connect(user = "postgres",password = "Felingato1992",host = "127.0.0.1",port = "5432",database = "tvrec")
         self.cursor = self.db_connection.cursor()
     
     def close_spider(self, spider):
@@ -19,12 +19,20 @@ class BotPipeline(object):
     
     def process_item(self, item, spider):   
        # insercion = "INSERT INTO televisores(Modelo,Marca,Precio,TamañoPantalla,Resolucion,TipoDisplay,url)"
-        sql = "INSERT INTO televisores(Modelo,Marca,Precio,TamañoPantalla,Resolucion,TipoDisplay,url) values(%s,%s,%s,%s,%s,%s,%s)"
-        values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],"pagina.com")
-        self.cursor.execute(sql,values)
-        self.db_connection.commit()
+       
+       if(item["url"].find('https://www.bestbuy.com')>=0): 
+       
+            sql = "INSERT INTO TELEVISORBB(modelo,marca,Precio,tamaÑopantalla,resoluciÓn,tipodisplay,urlbb,calificaciÓnbb) values(%s,%s,%s,%s,%s,%s,%s,%s)"
+            values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'])
+            self.cursor.execute(sql,values)
+            self.db_connection.commit()
+       else:
+           sql = "INSERT INTO televisorwalmart(Modelo,Marca,Precio,TamañoPantalla,Resolución,TipoDisplay,urlwalmart,calificaciÓnwalmart) values(%s,%s,%s,%s,%s,%s,%s,%s)"
+           values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'])
+           self.cursor.execute(sql,values)
+           self.db_connection.commit()
         
-        return item
+       return item
     
     
         

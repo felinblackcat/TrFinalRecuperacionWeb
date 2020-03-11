@@ -7,7 +7,6 @@ from scrapy.linkextractors import LinkExtractor
 from src.Bot.Bot.items import BotItem
 import cfscrape
 from Bot.WebScraping import WebScraping
-import requests,html5lib
 from bs4 import BeautifulSoup
 
 class TelevisoreswalmartSpider(scrapy.Spider):
@@ -16,12 +15,7 @@ class TelevisoreswalmartSpider(scrapy.Spider):
     dominio = 'https://www.walmart.com'
     SCRAP = WebScraping()    
     ListaHost = SCRAP.scrapingLinkHost1()    
-    #item_count = 0
-    #start_urls = ['https://www.walmart.com/browse/tv-video/all-tvs/3944_1060825_447913/?page=2']
-    #rules = {
-     #   Rule(LinkExtractor(allow=(),restrict_xpaths=('//li[@class=Grid-col u-size-6-12 u-size-1-4-m u-size-1-5-xl search-gridview-first-col-item search-gridview-first-grid-row-item]')),callback = 'parse_item',follow=False)
-      
-    #}
+    
     
     
     def start_requests(self):        
@@ -45,8 +39,11 @@ class TelevisoreswalmartSpider(scrapy.Spider):
         Televisores = TelevisoresPagina.xpath('//div[@class="search-result-product-title gridview"]//a/@href').extract()
         
         for televisor in Televisores:
-            #print(self.dominio+televisor)            
-            yield response.follow(self.dominio+televisor,callback=self.TelevisionData,cookies=self.token,headers={'User-Agent': self.agent})
+            #print(self.dominio+televisor)  
+            respuesta = response.follow(self.dominio+televisor,callback=self.TelevisionData,cookies=self.token,headers={'User-Agent': self.agent})
+            respuesta.meta['URL'] = self.dominio+televisor
+            
+            yield respuesta
         
         pass
 
@@ -72,15 +69,14 @@ class TelevisoreswalmartSpider(scrapy.Spider):
             Televisor["Modelo"] = datos2.find('div',class_='valign-middle secondary-info-margin-right copy-mini display-inline-block other-info').text.strip().split("Model: ")[1]
             Televisor["Marca"] = datos2.find('div',class_='valign-middle secondary-info-margin-right copy-mini display-inline-block').a.span.text.strip()
             Televisor["Precio"] = float(BeautifulSoup(res.text, 'html5lib').find('div',class_='prod-PriceHero').find('span',class_='hide-content display-inline-block-m').find('span',class_='price display-inline-block arrange-fit price price--stylized').find('span',class_='visuallyhidden').text.strip().split('$')[1])
-                       
-        except:
-            Televisor["TamañoPantalla"]=''
-            Televisor["Resolucion"]=''
-            Televisor["TipoDisplay"]=''
-            Televisor["Modelo"] = ''
-            Televisor["Marca"] = ''
-            Televisor["Precio"] = ''
+            calificacion = BeautifulSoup(res.text, 'html5lib').find('div',class_='CustomerReviews-container').find('div',class_='ReviewsHeader-ratingContainer').span.span.text.strip()   
+            Televisor["Calificacion"]=float(calificacion)
+            Televisor["url"] = res.meta.get('URL')
             
+            
+        except:
+            #No es televisor XD
+            print("No es televisor.")
         
         return Televisor    
         

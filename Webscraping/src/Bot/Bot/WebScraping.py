@@ -15,8 +15,9 @@ class WebScraping:
         self.HOST1 = "https://www.walmart.com"
         self.HOST2 = "https://www.bestbuy.com"
         self.HOST1Busqueda = "https://www.walmart.com/browse/tv-video/all-tvs/3944_1060825_447913"
-        self.HOST2Busqueda = "https://www.bestbuy.com/site/tvs/all-flat-screen-tvs/abcat0101001.c?id=abcat0101001"
+        self.HOST2Busqueda = "https://www.bestbuy.com/site/tvs/all-flat-screen-tvs/abcat0101001.c?id=abcat0101001&intl=nosplash"
         self.Televisores = {}
+        self.user_agent = {'User-agent': 'Mozilla/5.0'}
         #direccon de demas resultados : https://www.walmart.com/browse/tv-video/all-tvs/3944_1060825_447913/?page=2
     
     def scrapingLinkHost1(self):
@@ -32,7 +33,17 @@ class WebScraping:
         return(ListaCrawling)   
         
     def scrapingLinkHost2(self):
-        return(True)
+        ListaCrawling = []        
+        page = requests.get(self.HOST2Busqueda,headers=self.user_agent)
+        parser = BeautifulSoup(page.content, 'html5lib') 
+        paginador = parser.find('ol',class_='paging-list').find_all('li')
+        NumPaginas = paginador[len(paginador)-1].a.text
+        for Pagina in range(1,int(NumPaginas)+1):
+            ListaCrawling.append("https://www.bestbuy.com/site/tvs/all-flat-screen-tvs/abcat0101001.c?cp="+str(Pagina)+"&id=abcat0101001&intl=nosplash")
+        
+        return(ListaCrawling)  
+        
+        
         
     
 
