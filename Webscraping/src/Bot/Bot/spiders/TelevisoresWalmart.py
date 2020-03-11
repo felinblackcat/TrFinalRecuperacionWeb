@@ -73,7 +73,7 @@ class TelevisoreswalmartSpider(scrapy.Spider):
             Televisor["Calificacion"]=float(calificacion)
             Televisor["url"] = res.meta.get('URL')
             Televisor["activo"]="true"
-            
+            #revisar
         except:
             #No es televisor XD
             print("No es televisor.")
