@@ -55,6 +55,7 @@ class TelevisoresbestbuySpider(scrapy.Spider):
             Televisor["Calificacion"]=float(html.find('div',class_='user-generated-content-ugc-stats').find('div','appContainer size-l').find('ul',class_='reviews-stats-list').find_all('li')[0].find('span',class_='c-review-average').text)
         except:
             Televisor["Calificacion"]=float(0)
+        Televisor["activo"]="true"
         return Televisor    
     
     

@@ -19,5 +19,5 @@ class BotItem(scrapy.Item):
     TipoDisplay = scrapy.Field()
     Calificacion = scrapy.Field()
     url = scrapy.Field()  
-    
+    activo = scrapy.Field()
     pass

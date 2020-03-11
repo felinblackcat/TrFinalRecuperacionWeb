@@ -72,7 +72,7 @@ class TelevisoreswalmartSpider(scrapy.Spider):
             calificacion = BeautifulSoup(res.text, 'html5lib').find('div',class_='CustomerReviews-container').find('div',class_='ReviewsHeader-ratingContainer').span.span.text.strip()   
             Televisor["Calificacion"]=float(calificacion)
             Televisor["url"] = res.meta.get('URL')
-            
+            Televisor["activo"]="true"
             
         except:
             #No es televisor XD

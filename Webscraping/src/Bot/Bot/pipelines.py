@@ -22,13 +22,13 @@ class BotPipeline(object):
        
        if(item["url"].find('https://www.bestbuy.com')>=0): 
        
-            sql = "INSERT INTO TELEVISORBB(modelo,marca,Precio,tamaÑopantalla,resoluciÓn,tipodisplay,urlbb,calificaciÓnbb) values(%s,%s,%s,%s,%s,%s,%s,%s)"
-            values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'])
+            sql = "INSERT INTO TELEVISORBB(modelo,marca,Precio,tamaÑopantalla,resoluciÓn,tipodisplay,urlbb,calificaciÓnbb,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
             self.cursor.execute(sql,values)
             self.db_connection.commit()
        else:
-           sql = "INSERT INTO televisorwalmart(Modelo,Marca,Precio,TamañoPantalla,Resolución,TipoDisplay,urlwalmart,calificaciÓnwalmart) values(%s,%s,%s,%s,%s,%s,%s,%s)"
-           values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'])
+           sql = "INSERT INTO televisorwalmart(Modelo,Marca,Precio,TamañoPantalla,Resolución,TipoDisplay,urlwalmart,calificaciÓnwalmart,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+           values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
            self.cursor.execute(sql,values)
            self.db_connection.commit()
         
