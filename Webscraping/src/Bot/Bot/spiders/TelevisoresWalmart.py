@@ -15,7 +15,7 @@ class TelevisoreswalmartSpider(scrapy.Spider):
     dominio = 'https://www.walmart.com'
     SCRAP = WebScraping()    
     ListaHost = SCRAP.scrapingLinkHost1()    
-    
+    ValidadorTelevisor={'Screen Size':'','Resolution':'','Is Smart':'','Display Technology':'','Backlight Type':''}
     
     
     def start_requests(self):        
@@ -34,53 +34,133 @@ class TelevisoreswalmartSpider(scrapy.Spider):
     
     
     def parse(self, response):
+        html = BeautifulSoup(response.text, 'html5lib')
         
-        TelevisoresPagina = response.xpath('//div[@class="search-product-result"]//ul[@class="search-result-gridview-items four-items"]//li')
-        Televisores = TelevisoresPagina.xpath('//div[@class="search-result-product-title gridview"]//a/@href').extract()
-        
-        for televisor in Televisores:
-            #print(self.dominio+televisor)  
-            respuesta = response.follow(self.dominio+televisor,callback=self.TelevisionData,cookies=self.token,headers={'User-Agent': self.agent})
-            respuesta.meta['URL'] = self.dominio+televisor
-            
+        TelevisoresPagina = html.find('div',class_='search-product-result').find('ul',class_='search-result-gridview-items four-items')
+        Televisores = TelevisoresPagina.find_all('li')
+        for Televisor in Televisores:
+            link = self.dominio+Televisor.find('div',class_='search-result-product-title gridview').find('a')['href']
+            respuesta = response.follow(link,callback=self.TelevisionData,cookies=self.token,headers={'User-Agent': self.agent})
+            respuesta.meta['URL'] = link            
             yield respuesta
-        
         pass
 
-    def TelevisionData(self,res):     
+    def TelevisionData(self,res):  
+        html = BeautifulSoup(res.text, 'html5lib')
         Televisor = BotItem()
+        Televisor['url'] = res.meta.get('URL')
+        bandera = True
         try:
-            caracteristicas = BeautifulSoup(res.text, 'html5lib').find('div',class_='SpecHighlights-container').find('ul',class_='SpecHighlights-list Grid text-left').find_all('li',class_='Grid-col u-size-12-12-xs u-size-6-12-s u-size-4-12-m text-center')
+            Stock = html.find('div','text-left AboutProductSection AboutThisItem m-padding-ends').find('div',class_='Specification-container').find('table','table table-striped-odd specification')          
             
-            for caracteristica in caracteristicas:
-                dato = caracteristica.find('div',class_='SpecHighlights-list-item')
-                label = dato.find('div',class_='SpecHighlights-list-label').text.strip()
-                valor = dato.find('div',class_='SpecHighlights-list-value').text.strip()
-                if(label=="Screen Size"):
-                    Televisor["TamañoPantalla"]=valor.split('"')[0]
+            Caracteristicas = Stock.find_all('tr') 
+            for Caracteristica in Caracteristicas:
+                dato = Caracteristica.find_all('td')
+                tipo = dato[0].text.strip()               
+                value = dato[1].text.strip()  
+                
+                # print(tipo)
+                
+                if(tipo=="Screen Size"):
                     
-                elif(label=="Resolution"):
-                    Televisor["Resolucion"]=valor
+                    if(not(tipo in self.ValidadorTelevisor)):
+                        
+                        bandera = False
+                        break;
+                    else:   
+                        Televisor['TamañoPantalla']=value.split('"')[0].split('\\')[0]
+                        
+                        
+                elif(tipo=='Resolution'):
                     
-                elif(label=="Display Technology"):
-                    Televisor["TipoDisplay"]=valor  
+                    if(not(tipo  in self.ValidadorTelevisor)):
+                        
+                        bandera = False
+                        break;
+                    else:
+                        Televisor['Resolucion']=value
+                elif(tipo=='Is Smart'):
                     
-            datos2 = BeautifulSoup(res.text, 'html5lib').find('div',class_='hf-Bot').find('div',class_='prod-productsecondaryinformation display-inline-block prod-SecondaryInfo')
-            Televisor["Modelo"] = datos2.find('div',class_='valign-middle secondary-info-margin-right copy-mini display-inline-block other-info').text.strip().split("Model: ")[1]
-            Televisor["Marca"] = datos2.find('div',class_='valign-middle secondary-info-margin-right copy-mini display-inline-block').a.span.text.strip()
-            Televisor["Precio"] = float(BeautifulSoup(res.text, 'html5lib').find('div',class_='prod-PriceHero').find('span',class_='hide-content display-inline-block-m').find('span',class_='price display-inline-block arrange-fit price price--stylized').find('span',class_='visuallyhidden').text.strip().split('$')[1])
-            calificacion = BeautifulSoup(res.text, 'html5lib').find('div',class_='CustomerReviews-container').find('div',class_='ReviewsHeader-ratingContainer').span.span.text.strip()   
-            Televisor["Calificacion"]=float(calificacion)
-            Televisor["url"] = res.meta.get('URL')
-            Televisor["activo"]="true"
-            #revisar
+                    if(not(tipo in self.ValidadorTelevisor)):
+                        
+                        bandera = False
+                        break;
+                        
+                elif(tipo=="Display Technology"):
+                    
+                    if(not(tipo in self.ValidadorTelevisor)):
+                        
+                        bandera = False
+                        break;
+                    else:
+                        Televisor['TipoDisplay']=value
+                    
+                elif(tipo=="Backlight Type"):
+                    
+                    if(not(tipo in self.ValidadorTelevisor)):
+                        
+                        bandera = False
+                        break;
+                elif(tipo=="Model"):
+                    Televisor['Modelo'] =value
+                    
+                elif(tipo=="Brand"):
+                    Televisor['Marca'] =value
+                
+           
+            if(bandera):
+                try:
+                    precio = html.find('span',class_='price display-inline-block arrange-fit price price--stylized').find('span',class_='price-characteristic')['content']
+                    Televisor['Precio'] = float(precio)                    
+                except:
+                    Televisor['Precio']= 0
+                    
+                    
+                try:
+                    puntaje = html.find('span',class_='ReviewsHeader-ratingPrefix font-bold').text.strip()                    
+                    Televisor['Calificacion']=float(puntaje)
+                except:
+                    Televisor['Calificacion']=0
+                Televisor['activo'] = "true"
+                
+                if(not('TamañoPantalla' in Televisor)):  
+                    Televisor['TamañoPantalla'] =' ' 
+                if(not('TipoDisplay' in Televisor)):
+                    Televisor['TipoDisplay']  =' '
+                    
+                if(not('Marca'in Televisor)):
+                    Televisor['Marca']  =' '
+                if(not('Resolucion'in Televisor)):                 
+                    Televisor['Resolucion']=' '
+                    
+                if(not('Modelo'in Televisor)):
+                    try:
+                        Televisor['Modelo']=html.find('div',class_='valign-middle secondary-info-margin-right copy-mini display-inline-block other-info').text.strip()
+                    except:
+                        Televisor['Modelo']=' '
+            else:
+                print('No es televisor',Televisor['url'])
+            
         except:
-            #No es televisor XD
-            print("No es televisor.")
+           print("fuera de stock: ",Televisor['url'])
+        
+        
+        
+            
+            
+            
+            
+            
+            
+            
+        
+        
+        
+        
         
         return Televisor    
         
             
-              
+            
         
 

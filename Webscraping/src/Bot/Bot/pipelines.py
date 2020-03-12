@@ -15,23 +15,39 @@ class BotPipeline(object):
         self.cursor = self.db_connection.cursor()
     
     def close_spider(self, spider):
+        self.cursor.close()
         self.db_connection.close()
     
     def process_item(self, item, spider):   
        # insercion = "INSERT INTO televisores(Modelo,Marca,Precio,TamañoPantalla,Resolucion,TipoDisplay,url)"
        
        if(item["url"].find('https://www.bestbuy.com')>=0): 
-       
-            sql = "INSERT INTO TELEVISORBB(modelo,marca,Precio,tamaÑopantalla,resoluciÓn,tipodisplay,urlbb,calificaciÓnbb,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
-            self.cursor.execute(sql,values)
-            self.db_connection.commit()
-       else:
-           sql = "INSERT INTO televisorwalmart(modelo,marca,Precio,tamaÑopantalla,resoluciÓn,tipodisplay,urlwalmart,calificaciÓnwalmart,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-           values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
-           self.cursor.execute(sql,values)
-           self.db_connection.commit()
+            try:
+                sql = "INSERT INTO TELEVISORBB(modelo,marca,Precio,tamaÑopantalla,resoluciÓn,tipodisplay,urlbb,calificaciÓnbb,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
+                self.cursor.execute(sql,values)
+                self.db_connection.commit()
+            except Exception as error:
+                self.db_connection.rollback()
+                print ("Oops! An exception has occured:", error)
+                print ("Exception TYPE:", type(error))
+                
+            
+       elif(item["url"].find('https://www.walmart.com')>=0):
+           if(item['Modelo']!=' '):
+               
+               try:
+                   sql = "INSERT INTO televisorwalmart(modelo,marca,Precio,tamaÑopantalla,resoluciÓn,tipodisplay,urlwalmart,calificaciÓnwalmart,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                   values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
+                   self.cursor.execute(sql,values)
+                   self.db_connection.commit()
         
+               except Exception as error:
+                    self.db_connection.rollback()
+                    print ("Oops! An exception has occured:", error)
+                    print ("Exception TYPE:", type(error))
+               
+               
        return item
     
     
