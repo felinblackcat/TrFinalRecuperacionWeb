@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import scrapy
-import sys
-from scrapy.spiders import CrawlSpider,Rule
-from scrapy.exceptions import CloseSpider
-from scrapy.linkextractors import LinkExtractor
+
+from src.Bot.Bot.WebScraping import WebScraping
+from scrapy.crawler import CrawlerProcess
 from src.Bot.Bot.items import BotItem
 import cfscrape
-from Bot.WebScraping import WebScraping
+
 from bs4 import BeautifulSoup
 
 class TelevisoreswalmartSpider(scrapy.Spider):
@@ -17,7 +16,8 @@ class TelevisoreswalmartSpider(scrapy.Spider):
     ListaHost = SCRAP.scrapingLinkHost1()    
     ValidadorTelevisor={'Screen Size':'','Resolution':'','Is Smart':'','Display Technology':'','Backlight Type':''}
     
-    
+        
+        
     def start_requests(self):        
         urls = self.ListaHost # url inicial (lista televisores)
         token,agent = cfscrape.get_tokens(url="https://www.walmart.com/browse/tv-video/all-tvs/3944_1060825_447913/?page=1")
@@ -161,6 +161,11 @@ class TelevisoreswalmartSpider(scrapy.Spider):
         return Televisor    
         
             
-            
-        
-
+     
+process = CrawlerProcess(settings={
+                'FEED_FORMAT': 'json',
+                'FEED_URI': 'items.json'
+            })
+    
+process.crawl(TelevisoreswalmartSpider)
+process.start()

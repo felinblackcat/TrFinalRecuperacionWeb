@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import scrapy
-from Bot.WebScraping import WebScraping
+from src.Bot.Bot.WebScraping import WebScraping
 from bs4 import BeautifulSoup
 from src.Bot.Bot.items import BotItem
-import cfscrape
+
 
 
 
@@ -58,6 +58,8 @@ class TelevisoresbestbuySpider(scrapy.Spider):
         Televisor["activo"]="true"
         return Televisor    
     
+
+
     
     
     
