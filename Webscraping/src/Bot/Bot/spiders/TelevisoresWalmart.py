@@ -2,7 +2,7 @@
 import scrapy
 
 from src.Bot.Bot.WebScraping import WebScraping
-from scrapy.crawler import CrawlerProcess
+
 from src.Bot.Bot.items import BotItem
 import cfscrape
 
@@ -162,10 +162,4 @@ class TelevisoreswalmartSpider(scrapy.Spider):
         
             
      
-process = CrawlerProcess(settings={
-                'FEED_FORMAT': 'json',
-                'FEED_URI': 'items.json'
-            })
-    
-process.crawl(TelevisoreswalmartSpider)
-process.start()
+
