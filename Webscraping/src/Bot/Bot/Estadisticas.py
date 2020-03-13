@@ -25,3 +25,10 @@ data["resoluciÓn"].value_counts()
 data["tamaÑopantalla"].value_counts()
 data["tipodisplay"].value_counts()
 data["activo"].value_counts()
+#cpnsulta de todas las tablas de una base de datos 
+'''
+SELECT table_name --seleccionamos solo la columna del nombre de la tabla
+FROM information_schema.tables --seleccionamos la información del esquema 
+WHERE table_schema='public' --las tablas se encuentran en el esquema publico
+AND table_type='BASE TABLE'; 
+'''
