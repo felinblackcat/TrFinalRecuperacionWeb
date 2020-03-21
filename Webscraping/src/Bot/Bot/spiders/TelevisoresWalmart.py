@@ -2,7 +2,7 @@
 import scrapy
 
 from src.Bot.Bot.WebScraping import WebScraping
-
+from scrapy.crawler import CrawlerProcess
 from src.Bot.Bot.items import BotItem
 import cfscrape
 
@@ -142,24 +142,10 @@ class TelevisoreswalmartSpider(scrapy.Spider):
                 print('No es televisor',Televisor['url'])
             
         except:
-           print("fuera de stock: ",Televisor['url'])
-        
-        
-        
-            
-            
-            
-            
-            
-            
-            
-        
-        
-        
+           print("fuera de stock: ",Televisor['url']) 
         
         
         return Televisor    
-        
-            
-     
+  
+
 

@@ -3,7 +3,7 @@ import scrapy
 from src.Bot.Bot.WebScraping import WebScraping
 from bs4 import BeautifulSoup
 from src.Bot.Bot.items import BotItem
-
+from scrapy.crawler import CrawlerProcess
 
 
 
@@ -56,10 +56,10 @@ class TelevisoresbestbuySpider(scrapy.Spider):
         except:
             Televisor["Calificacion"]=float(0)
         Televisor["activo"]="true"
-        return Televisor    
+        
+        return(Televisor)    
     
-
-
+ 
     
     
     
