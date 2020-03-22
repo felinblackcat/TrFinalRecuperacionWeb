@@ -8,7 +8,7 @@ import psycopg2
 
 class BotPipeline(object):
     
-        
+    cantidad = 0    
     
     def open_spider(self, spider):
         self.db_connection= psycopg2.connect(user = "postgres",password = "Felingato1992",host = "127.0.0.1",port = "5432",database = "tvrec")
@@ -23,7 +23,8 @@ class BotPipeline(object):
        
        if(item["url"].find('https://www.bestbuy.com')>=0): 
             try:
-                
+                self.cantidad = self.cantidad + 1
+                print(self.cantidad)
                 sql = "INSERT INTO TELEVISORBB(modelo,marca,Precio,tamaÑopantalla,resoluciÓn,tipodisplay,urlbb,calificaciÓnbb,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
                 self.cursor.execute(sql,values)
@@ -38,7 +39,8 @@ class BotPipeline(object):
            if(item['Modelo']!=' '):
                
                try:
-                   
+                   self.cantidad = self.cantidad + 1
+                   print(self.cantidad)
                    sql = "INSERT INTO televisorwalmart(modelo,marca,Precio,tamaÑopantalla,resoluciÓn,tipodisplay,urlwalmart,calificaciÓnwalmart,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                    values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
                    self.cursor.execute(sql,values)
