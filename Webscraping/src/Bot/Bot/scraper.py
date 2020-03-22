@@ -10,19 +10,30 @@ from src.Bot.Bot.spiders.TelevisoresWalmart import TelevisoreswalmartSpider
 from scrapy.crawler import CrawlerRunner
 from twisted.internet import reactor, defer
 from scrapy.utils.log import configure_logging
-
+from scrapy.utils.project import get_project_settings
 
 
 configure_logging()
-runner = CrawlerRunner()
+settings = get_project_settings()
+runner = CrawlerRunner(settings)
 @defer.inlineCallbacks
 def startScan():
-    
-    yield runner.crawl(TelevisoresbestbuySpider)
     yield runner.crawl(TelevisoreswalmartSpider)
+    yield runner.crawl(TelevisoresbestbuySpider)
+    
     reactor.stop()
     
     
 
 startScan()
 reactor.run()
+
+
+
+'''
+
+d = runner.crawl(TelevisoreswalmartSpider)
+d.addBoth(lambda _: reactor.stop())
+reactor.run() # the script will block here until the crawling is finished
+
+'''

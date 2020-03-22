@@ -23,6 +23,7 @@ class BotPipeline(object):
        
        if(item["url"].find('https://www.bestbuy.com')>=0): 
             try:
+                
                 sql = "INSERT INTO TELEVISORBB(modelo,marca,Precio,tamaÑopantalla,resoluciÓn,tipodisplay,urlbb,calificaciÓnbb,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
                 self.cursor.execute(sql,values)
@@ -37,6 +38,7 @@ class BotPipeline(object):
            if(item['Modelo']!=' '):
                
                try:
+                   
                    sql = "INSERT INTO televisorwalmart(modelo,marca,Precio,tamaÑopantalla,resoluciÓn,tipodisplay,urlwalmart,calificaciÓnwalmart,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                    values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
                    self.cursor.execute(sql,values)

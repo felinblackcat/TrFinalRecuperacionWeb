@@ -2,13 +2,18 @@
 import scrapy
 
 from src.Bot.Bot.WebScraping import WebScraping
-from scrapy.crawler import CrawlerProcess
 from src.Bot.Bot.items import BotItem
 import cfscrape
-
 from bs4 import BeautifulSoup
+from twisted.internet import reactor
+from scrapy.crawler import CrawlerRunner
+from scrapy.utils.log import configure_logging
+from scrapy.utils.project import get_project_settings
+
 
 class TelevisoreswalmartSpider(scrapy.Spider):
+    
+        
     name = 'TelevisoresWalmart'
     page_count = 1    
     dominio = 'https://www.walmart.com'
@@ -145,7 +150,19 @@ class TelevisoreswalmartSpider(scrapy.Spider):
            print("fuera de stock: ",Televisor['url']) 
         
         
-        return Televisor    
+        yield Televisor    
   
+'''
+settings = get_project_settings()
+#crawler = Crawler()
+runner = CrawlerRunner(settings)
+
+d = runner.crawl(TelevisoreswalmartSpider)
+d.addBoth(lambda _: reactor.stop())
+reactor.run() # the script will block here until the crawling is finished
+
+'''
+
+
 
 

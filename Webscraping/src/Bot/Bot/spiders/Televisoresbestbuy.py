@@ -57,7 +57,7 @@ class TelevisoresbestbuySpider(scrapy.Spider):
             Televisor["Calificacion"]=float(0)
         Televisor["activo"]="true"
         
-        return(Televisor)    
+        yield Televisor    
     
  
     
