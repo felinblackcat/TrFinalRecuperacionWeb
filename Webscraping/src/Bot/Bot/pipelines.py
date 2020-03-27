@@ -21,13 +21,13 @@ class BotPipeline(object):
     
     def process_item(self, item, spider):  
        self.signal.connect_and_emit_trigger(str(1))
-       # insercion = "INSERT INTO televisores(Modelo,Marca,Precio,TamañoPantalla,Resolucion,TipoDisplay,url)"
+       # insercion = "INSERT INTO televisores(Modelo,Marca,Precio,TamanoPantalla,Resolucion,TipoDisplay,url)"
        
        if(item["url"].find('https://www.bestbuy.com')>=0): 
             try:
                 self.cantidad = self.cantidad + 1
                 print(self.cantidad)
-                sql = "INSERT INTO TELEVISORBB(modelo,marca,Precio,tamaÑopantalla,resoluciÓn,tipodisplay,urlbb,calificaciÓnbb,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                sql = "INSERT INTO TELEVISORBB(modelo,marca,Precio,tamanopantalla,resolucion,tipodisplay,urlbb,calificacionbb,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
                 self.cursor.execute(sql,values)
                 self.db_connection.commit()
@@ -43,7 +43,7 @@ class BotPipeline(object):
                try:
                    self.cantidad = self.cantidad + 1
                    print(self.cantidad)
-                   sql = "INSERT INTO televisorwalmart(modelo,marca,Precio,tamaÑopantalla,resoluciÓn,tipodisplay,urlwalmart,calificaciÓnwalmart,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                   sql = "INSERT INTO televisorwalmart(modelo,marca,Precio,tamanopantalla,resolucion,tipodisplay,urlwalmart,calificacionwalmart,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                    values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
                    self.cursor.execute(sql,values)
                    self.db_connection.commit()

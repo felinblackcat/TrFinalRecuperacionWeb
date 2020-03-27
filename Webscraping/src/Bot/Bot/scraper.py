@@ -13,9 +13,10 @@ from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 
 
-from src.Bot.Bot.pipelines import BotPipeline
-
 #configure_logging()
+
+
+
 settings = get_project_settings()
 runner = CrawlerRunner(settings)
 @defer.inlineCallbacks
@@ -23,7 +24,9 @@ def startScan():
     yield runner.crawl(TelevisoreswalmartSpider)
     yield runner.crawl(TelevisoresbestbuySpider)    
     reactor.stop()
-    
+  
+def proceso(value):
+    print(value)
     
 
 startScan()
