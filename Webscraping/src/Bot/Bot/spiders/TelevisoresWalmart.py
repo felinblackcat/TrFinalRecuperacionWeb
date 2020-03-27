@@ -39,6 +39,7 @@ class TelevisoreswalmartSpider(scrapy.Spider):
     
     
     def parse(self, response):
+        
         html = BeautifulSoup(response.text, 'html5lib')
         
         TelevisoresPagina = html.find('div',class_='search-product-result').find('ul',class_='search-result-gridview-items four-items')

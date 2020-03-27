@@ -9,9 +9,11 @@ from src.Bot.Bot.spiders.Televisoresbestbuy import TelevisoresbestbuySpider
 from src.Bot.Bot.spiders.TelevisoresWalmart import TelevisoreswalmartSpider
 from scrapy.crawler import CrawlerRunner
 from twisted.internet import reactor, defer
-#from scrapy.utils.log import configure_logging
+from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 
+
+from src.Bot.Bot.pipelines import BotPipeline
 
 #configure_logging()
 settings = get_project_settings()

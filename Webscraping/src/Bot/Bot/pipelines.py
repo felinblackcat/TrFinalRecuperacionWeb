@@ -5,8 +5,9 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 import psycopg2
-
+from src.Bot.Bot.Señal import Foo
 class BotPipeline(object):
+    signal = Foo()
     
     cantidad = 0    
     
@@ -18,7 +19,8 @@ class BotPipeline(object):
         self.cursor.close()
         self.db_connection.close()
     
-    def process_item(self, item, spider):   
+    def process_item(self, item, spider):  
+       self.signal.connect_and_emit_trigger(str(1))
        # insercion = "INSERT INTO televisores(Modelo,Marca,Precio,TamañoPantalla,Resolucion,TipoDisplay,url)"
        
        if(item["url"].find('https://www.bestbuy.com')>=0): 
