@@ -13,7 +13,7 @@ from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 
 
-#configure_logging()
+configure_logging()
 
 
 
@@ -29,8 +29,8 @@ def proceso(value):
     print(value)
     
 
-startScan()
-reactor.run()
+#startScan()
+#reactor.run()
 
 
 

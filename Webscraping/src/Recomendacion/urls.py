@@ -1,5 +1,5 @@
 from django.urls import path
-from Recomendacion.views import *
+from Recomendacion.views import index,runspider
 from rest_framework.routers import DefaultRouter
 
 #router = DefaultRouter()
@@ -7,6 +7,7 @@ from rest_framework.routers import DefaultRouter
 
 urlpatterns = [
                 path('', index, name='index'),
+                path('runspider/', runspider, name='runspider'),
                 
                 
                 
