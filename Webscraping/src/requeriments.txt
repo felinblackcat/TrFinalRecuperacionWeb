@@ -3,8 +3,9 @@ scrapy
 psycopg2
 numpy
 pandas
-scikit-surprise
 html5lib
 beautifulsoup4
 django-bootstrap4
 Django
+djangorestframework
+scikit-surprise
