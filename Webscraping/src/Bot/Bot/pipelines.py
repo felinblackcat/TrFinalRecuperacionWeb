@@ -5,9 +5,9 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 import psycopg2
-from src.Bot.Bot.Señal import Foo
+
 class BotPipeline(object):
-    signal = Foo()
+    
     
     cantidad = 0    
     
@@ -20,7 +20,7 @@ class BotPipeline(object):
         self.db_connection.close()
     
     def process_item(self, item, spider):  
-       self.signal.connect_and_emit_trigger(str(1))
+       
        # insercion = "INSERT INTO televisores(Modelo,Marca,Precio,TamanoPantalla,Resolucion,TipoDisplay,url)"
        
        if(item["url"].find('https://www.bestbuy.com')>=0): 
@@ -28,7 +28,7 @@ class BotPipeline(object):
                 self.cantidad = self.cantidad + 1
                 print(self.cantidad)
                 sql = "INSERT INTO TELEVISORBB(modelo,marca,Precio,tamanopantalla,resolucion,tipodisplay,urlbb,calificacionbb,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
+                values = (item['Modelo'],item['Marca'],item['Precio'],item['TamanoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
                 self.cursor.execute(sql,values)
                 self.db_connection.commit()
             except Exception as error:

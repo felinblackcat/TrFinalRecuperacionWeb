@@ -11,3 +11,5 @@ djangorestframework
 #pip uninstall automat
 #pip unistall twisted
 scikit-surprise
+requests
+cfscrape

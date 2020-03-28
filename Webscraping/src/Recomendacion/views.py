@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
 import os
-from src.Bot.Bot import scraper
+from Bot.Bot import scraper
 import threading
 # Create your views here.
 import json
@@ -36,7 +36,7 @@ def runspider(request):
             data = {}
             data['Estado']="true"
             with open('data.json', 'w') as file:json.dump(data, file, indent=4)
-            #hilo.start()
+            hilo.start()
             context = {
                 'mensaje':'Inicio del proceso de scraping...',
                 }   
@@ -49,7 +49,7 @@ def runspider(request):
         data = {}
         data['Estado']="true"
         with open('data.json', 'w') as file:json.dump(data, file, indent=4)
-        #hilo.start()
+        hilo.start()
         context = {
                 'mensaje':'Inicio del proceso de scraping...',
             }  

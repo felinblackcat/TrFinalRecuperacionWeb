@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
-from src.Bot.Bot.WebScraping import WebScraping
-from src.Bot.Bot.items import BotItem
+from Bot.Bot.WebScraping import WebScraping
+from Bot.Bot.items import BotItem
 import cfscrape
 from bs4 import BeautifulSoup
 from twisted.internet import reactor
