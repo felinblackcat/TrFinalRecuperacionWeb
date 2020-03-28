@@ -23,7 +23,7 @@ def index (request):
 def runspider(request):
     hilo  = threading.Thread(target=ejecutar_spyders)
     if(os.path.isfile('data.json')):
-        
+        print("ejecutando")
         with open('data.json') as file:data = json.load(file)
         if(data['Estado']=="true"):
             
@@ -36,7 +36,7 @@ def runspider(request):
             data = {}
             data['Estado']="true"
             with open('data.json', 'w') as file:json.dump(data, file, indent=4)
-            hilo.start()
+            #hilo.start()
             context = {
                 'mensaje':'Inicio del proceso de scraping...',
                 }   
@@ -49,7 +49,7 @@ def runspider(request):
         data = {}
         data['Estado']="true"
         with open('data.json', 'w') as file:json.dump(data, file, indent=4)
-        hilo.start()
+        #hilo.start()
         context = {
                 'mensaje':'Inicio del proceso de scraping...',
             }  
@@ -57,10 +57,20 @@ def runspider(request):
      
         return render(request,'alltelevisores.html',context)
          
-         
-        
-         
-     
-         
+  
+@csrf_exempt   
+def registro(request):      
+    return render(request,'registro.html')
+
+
+@csrf_exempt    
+def RegistrarUsuario(request):
+    print(request.POST.get('email'),request.POST.get('password'))
+    
+    context = {
+                'mensaje':{'usuario':request.POST.get('email')},
+                }
+    
+    return render(request,'index.html',context)        
  
  

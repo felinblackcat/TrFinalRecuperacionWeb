@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from Recomendacion.views import index,runspider,registro,RegistrarUsuario
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('Recomendacion.urls')),
-    #path('',include()),
+    path('', index, name='index'),
+    path('runspider/', runspider, name='runspider'),
+    path('registro/',registro,name='registro'),
+    path('RegistrarUsuario/',RegistrarUsuario,name='RegistrarUsuario'),
 ]
