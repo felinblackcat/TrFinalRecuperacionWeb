@@ -55,16 +55,18 @@ def Loguearse(request):
     
     
     if(request.method=="POST"):
-        print(requests)
-        user = authenticate(username=request.POST.get('email'), password=request.POST.get('password'))
+        username = request.POST['email']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
         
         print(user)
         if user is not None:
-            login(request, user)
+            print("se logueo")
+            auth_login(request, user)
             return redirect('index')
         else:
-            print("error")
-            return redirect('index')
+            
+            return redirect('login')
         
         
         
