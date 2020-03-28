@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container">
     <center><h1>Login:</h1></center>
-    <form action="{% url 'RegistrarUsuario' %}" method="POST">{% csrf_token %}
+    <form action="{% url 'Loguearse' %}" method="POST">{% csrf_token %}
       <div class="form-group">
         <label for="exampleInputEmail1">Email address</label>
         <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">

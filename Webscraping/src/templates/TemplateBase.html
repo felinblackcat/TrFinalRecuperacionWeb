@@ -28,7 +28,10 @@
         <li class="nav-item">
           <a class="nav-link" href="{% url 'login' %}">Login</a>
         </li>
-            
+        {% if user.is_authenticated %}
+            {{user.email}}
+
+        {% endif %}   
       
       </ul>
     </nav>

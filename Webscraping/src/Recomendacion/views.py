@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as auth_login
 
 
 
@@ -51,9 +52,25 @@ def RegistrarUsuario(request):
           
  
 def Loguearse(request):
-    user = authenticate(username=username, password=password)
-    login(request, user)
-    return redirect('home')
+    
+    
+    if(request.method=="POST"):
+        print(requests)
+        user = authenticate(username=request.POST.get('email'), password=request.POST.get('password'))
+        
+        print(user)
+        if user is not None:
+            login(request, user)
+            return redirect('index')
+        else:
+            print("error")
+            return redirect('index')
+        
+        
+        
+        #auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')     
+        
+        
 
     
     
