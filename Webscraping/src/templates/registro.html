@@ -1,8 +1,15 @@
 {% extends "TemplateBase.html" %}
 
 
-
 {% block content %}
+{% if user.is_authenticated %}
+    No se puede volver a registrar.
+{%else%}
+
+
+
+
+
 
 <div class="container">
     <center><h1>Registro de usuarios:</h1></center>
@@ -21,6 +28,6 @@
       <button type="submit" class="btn btn-primary">Registrar</button>
     </form>
 </div>
-
+{% endif %}  
 
 {% endblock %}

@@ -6,6 +6,7 @@
 {% if user.is_authenticated %}
     Session iniciada: {{user.email}}
 {%else%}
+
 <div class="container">
     <center><h1>Login:</h1></center>
     <form action="{% url 'Loguearse' %}" method="POST">{% csrf_token %}
