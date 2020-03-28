@@ -28,7 +28,7 @@ class BotPipeline(object):
                 self.cantidad = self.cantidad + 1
                 print(self.cantidad)
                 sql = "INSERT INTO TELEVISORBB(modelo,marca,Precio,tamanopantalla,resolucion,tipodisplay,urlbb,calificacionbb,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                values = (item['Modelo'],item['Marca'],item['Precio'],item['TamanoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
+                values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
                 self.cursor.execute(sql,values)
                 self.db_connection.commit()
             except Exception as error:
