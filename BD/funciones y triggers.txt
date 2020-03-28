@@ -1,0 +1,82 @@
+CREATE OR REPLACE FUNCTION comparar_items() RETURNS TRIGGER AS $comparar_items$
+	DECLARE
+		existe record;
+		varobservaciones text := '';
+		tabla_actual text;
+		otra_tabla text;
+		urlpbb text;
+		urlpwalmart text;
+		datos_otra_tablai text := '';
+	
+	BEGIN
+		SELECT * into existe from televisor where modelo = NEW.modelo;
+		IF (existe.modelo is NOT null) THEN
+		
+			IF (existe.datos_otra_tabla <> (NEW.marca||NEW.precio||NEW.TAMANOPANTALLA||NEW.RESOLUCION||NEW.tipodisplay)) THEN 
+		
+				IF (TG_TABLE_NAME = 'pruebatelevisorbb') THEN
+					tabla_actual := 'www.bestbuy.com';
+					urlpbb := NEW.urlbb;
+					otra_tabla :=  'www.walmart.com';
+					urlpwalmart := existe.urlwalmart;
+				ELSE
+					tabla_actual := 'Walmart';
+					urlpwalmart := NEW.urlwalmart;
+					otra_tabla :=  'Best buy';
+					urlpbb := existe.urlbb;
+				END IF;
+				
+				IF (existe.marca <> NEW.marca) THEN
+					varobservaciones := varobservaciones || 'Diferencia de valor encontrado para marca. Se selecciona el valor: ' || existe.marca || '. Posibles valores: ' || existe.marca || ' en ' || otra_tabla || ' y ' || NEW.marca || ' en ' || tabla_actual ||'\n';
+					datos_otra_tablai := datos_otra_tablai||NEW.marca;
+				END IF;
+				IF (existe.precio <> NEW.precio) THEN
+					varobservaciones := varobservaciones || 'Diferencia de valor encontrado para precio. Se selecciona el valor: ' || existe.precio || '. Posibles valores: ' || existe.precio || ' en ' || otra_tabla || ' y ' || NEW.precio || ' en ' || tabla_actual || '\n';
+					datos_otra_tablai := datos_otra_tablai||NEW.precio;
+				END IF;
+				IF (existe.TAMANOPANTALLA <> NEW.TAMANOPANTALLA) THEN
+					varobservaciones := varobservaciones || 'Diferencia de valor encontrado para tamañoPantalla. Se selecciona el valor: ' || existe.TAMANOPANTALLA || '. Posibles valores: ' || existe.TAMANOPANTALLA || ' en ' || otra_tabla || ' y ' || NEW.TAMANOPANTALLA || ' en ' || tabla_actual || '\n';
+					datos_otra_tablai := datos_otra_tablai||NEW.TAMANOPANTALLA;
+				END IF;
+				IF (existe.RESOLUCION <> NEW.RESOLUCION) THEN
+					varobservaciones := varobservaciones || 'Diferencia de valor encontrado para resolucion. Se selecciona el valor: ' || existe.RESOLUCION || '. Posibles valores: ' || existe.RESOLUCION || ' en ' || otra_tabla || ' y ' || NEW.RESOLUCION || ' en ' || tabla_actual || '\n';
+					datos_otra_tablai := datos_otra_tablai||NEW.RESOLUCION;
+				END IF;
+				IF (existe.tipodisplay <> NEW.tipodisplay) THEN
+					varobservaciones := varobservaciones || 'Diferencia de valor encontrado para tipoDisplay. Se selecciona el valor: ' || existe.tipodisplay|| '. Posibles valores: ' || existe.tipodisplay || ' en ' || otra_tabla || ' y ' || NEW.tipodisplay || ' en ' || tabla_actual || '\n';
+					datos_otra_tablai := datos_otra_tablai||NEW.tipodisplay;
+				END IF;
+				update  televisor set observaciones = existe.observaciones || varobservaciones, urlbb = urlpbb, urlwalmart = urlpwalmart,datos_otra_tabla = datos_otra_tablai where modelo = NEW.modelo;
+			END IF;
+
+		ELSE
+			IF (TG_TABLE_NAME = 'pruebatelevisorbb') THEN
+				urlpbb := NEW.urlbb;
+				urlpwalmart := '';
+			ELSE
+				urlpwalmart := NEW.urlwalmart;
+				urlpbb := '';
+			END IF;
+			INSERT INTO televisor values(NEW.modelo,'',NEW.marca,NEW.precio,NEW.TAMANOPANTALLA,NEW.RESOLUCION,NEW.tipodisplay,urlpwalmart,urlpbb,true,'');
+
+		END IF;
+		RETURN NULL;
+	END;
+
+$comparar_items$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER comparar_itemsbb AFTER INSERT
+	ON televisorbb FOR EACH ROW
+	EXECUTE PROCEDURE comparar_items();
+	
+CREATE TRIGGER comparar_itemswalmart AFTER INSERT
+	ON televisorwalmart FOR EACH ROW
+	EXECUTE PROCEDURE comparar_items();
+
+CREATE OR REPLACE FUNCTION desactivar_items() RETURNS void AS $desactivar_items$
+DECLARE
+BEGIN
+UPDATE televisor SET activo = false WHERE modelo = (SELECT DISTINCT modelo FROM televisor WHERE modelo NOT IN (SELECT modelo FROM televisorbb) AND modelo NOT IN (SELECT modelo FROM televisorwalmart));
+END;
+$desactivar_items$ LANGUAGE plpgsql;
