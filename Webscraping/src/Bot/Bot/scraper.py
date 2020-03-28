@@ -26,7 +26,7 @@ runner = CrawlerRunner(settings)
 
 @defer.inlineCallbacks
 def startScan():
-    #yield runner.crawl(TelevisoreswalmartSpider)
+    yield runner.crawl(TelevisoreswalmartSpider)
     yield runner.crawl(TelevisoresbestbuySpider)    
     
     reactor.stop()
