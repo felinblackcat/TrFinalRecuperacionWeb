@@ -61,7 +61,7 @@ def RegistrarUsuario(request):
     if(request.method=="POST"):
         #(user,email,pass)
         try:
-            Usuario = User.objects.create_user(request.POST.get('email'),request.POST.get('email'),request.POST.get('password'))
+            Usuario = User.objects.create_user(request.POST.get('nombre'),request.POST.get('email'),request.POST.get('password'))
             Usuario.save()
             context = {
                     'mensaje':{'usuario':request.POST.get('email'),'mensaje':'Registrado Correctamente.'},                    
