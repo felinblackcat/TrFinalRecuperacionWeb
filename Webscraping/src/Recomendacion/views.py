@@ -29,7 +29,7 @@ def PlotGraficos(columna,keys,valores):
     ax.bar(xx, valores, width=0.8, align='center')
     ax.set_xticks(xx)
     ax.set_xticklabels(keys, rotation='vertical')
-    ax.set_title(columna.upper()+" Televisores")
+    ax.set_title(columna.upper()+" Televisores")    
     ax.set_xlabel(columna)
     ax.set_ylabel('Cantidad')    
     ax.plot()    
@@ -58,7 +58,7 @@ def EstadisticasTelevisores(request):
         EstadisticaDescriptiva = list(Busqueda.describe())
         keys = Busqueda.keys()
         valores =list(Busqueda)
-        imuri = PlotGraficos('marca',keys,valores)    
+        imuri = PlotGraficos(columna,keys,valores)    
     
         Estadistica = {
                           'count':EstadisticaDescriptiva[0],
