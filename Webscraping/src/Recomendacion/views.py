@@ -7,7 +7,16 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as do_logout
 from django_pandas.io import read_frame
-import pandas as pd
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+import matplotlib.pyplot as plt
+import io
+
+
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+from matplotlib.dates import DateFormatter
+
+
 @csrf_exempt
 def ListarTelevisores(request):
     return render(request,'ListarTelevisores.html')
@@ -17,15 +26,76 @@ def ListarTelevisores(request):
 def EstadisticasTelevisores(request):
     
     qs = Televisorbb.objects.all()
-    df = read_frame(qs)
-    EstadisticasDescriptivas = df.describe()
-    Marca = df.groupby(['marca']).agg({'marca':'count'})
+    df = read_frame(qs)    
+    
+    #Estadisticas:
+    
+    #Calificacion =  df['calificacion'].describe()  
+    
+    
+    Marca =  df.groupby(['marca'])['marca'].count()
+    keys = Marca.keys()
+    valores =list(Marca)
+    fig = plt.figure(u'MARCA') # Figure
+    ax = fig.add_subplot(111) # Axes
+    xx = range(len(valores))
+    ax.bar(xx, valores, width=0.8, align='center')
+    ax.set_xticks(xx)
+    ax.set_xticklabels(keys)
+    ax.set_title("Marca")
+    ax.plot()
+    buf = io.BytesIO()
+    canvas = FigureCanvasAgg(fig)
+    canvas.print_png(buf)
+    buf.getvalue()
+    fig.clear()
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     TamanoPantalla =  df.groupby(['tamanopantalla']).agg({'tamanopantalla':'count'})
     ETP = TamanoPantalla.describe()
-    TipoPantalla =  df.groupby(['tipodisplay']).agg({'tipodisplay':'count'})
-    Resolucion =  df.groupby(['resolucion']).agg({'resolucion':'count'})
     
-    print(ETP)
+    
+    
+    
+    
+    TipoPantalla =  df.groupby(['tipodisplay']).agg({'tipodisplay':'count'})
+    EtipoP = TipoPantalla.describe()
+    
+    
+    
+    Resolucion =  df.groupby(['resolucion']).agg({'resolucion':'count'})
+    ER  = Resolucion.describe()
+    
+    
+    JEstadisticas = {'marca':'datos','TamanoPantalla':'datos','TipoPantalla':'datos','Resolucion':'datos','Precio':'datos','Calificacion':'datos'}
+    
+    
+    
     
     
     #
@@ -33,7 +103,7 @@ def EstadisticasTelevisores(request):
     
     
     context = {
-                 'ListaUsuarios':'cosa',                    
+                 'Estadisticas':buf.getvalue(),                    
                     }
     
     
