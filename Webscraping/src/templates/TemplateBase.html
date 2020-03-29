@@ -30,6 +30,7 @@
         </li>
         {% if user.is_authenticated %}
             {{user.email}}
+           
             <a href="{% url 'deslog' %}">Cerrar Session</a>
         {% endif %}   
       

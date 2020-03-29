@@ -6,9 +6,41 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as do_logout
 
+
+@csrf_exempt
+def ListarTelevisores(request):
+    return render(request,'ListarTelevisores.html')
+
+
+@csrf_exempt
+def EstadisticasTelevisores(request):
+    return render(request,'EstadisticasTelevisores.html')
+
+
+@csrf_exempt
+def GestionTelevisores(request):
+    return render(request,'GestionTelevisores.html')
+@csrf_exempt
+def SistemaRecomendacion(request):
+    return render(request,'SistemaRecomendacion.html')
+@csrf_exempt
+def MostrarUSuarios(request):
+    Consulta = User.objects.all().values('username','is_superuser')
+    context = {
+                    'ListaUsuarios':Consulta,                    
+                    }
+            
+    
+    return render(request,'MostrarUsuarios.html',context)
+
+@csrf_exempt
+def AdminPanel(request):
+    return render(request,'adminPanel.html')
+
+
+@csrf_exempt
 def userPanel(request):
     return render(request,'userPanel.html')
-
 
 @csrf_exempt
 def index (request):
@@ -26,8 +58,6 @@ def registro(request):
 
 @csrf_exempt    
 def RegistrarUsuario(request):
-    
-    
     if(request.method=="POST"):
         #(user,email,pass)
         try:
@@ -37,11 +67,7 @@ def RegistrarUsuario(request):
                     'mensaje':{'usuario':request.POST.get('email'),'mensaje':'Registrado Correctamente.'},                    
                     }
     
-            return render(request,'index.html',context)      
-            
-            
-            
-        
+            return render(request,'index.html',context)  
         except IntegrityError:
             context = {
                     'mensaje':{'usuario':request.POST.get('email'),'mensaje':'Error usuario ya registrado.'},                    
@@ -51,8 +77,6 @@ def RegistrarUsuario(request):
             
 def deslog(request):
     do_logout(request)
-    
-    
     return redirect('login')
           
  
@@ -68,7 +92,12 @@ def Loguearse(request):
         if user is not None:
             
             auth_login(request, user)
-            return redirect('userPanel')
+            if(user.is_superuser):
+                
+                return redirect('AdminPanel')
+            
+            else:
+                return redirect('userPanel')
         else:
             
             return redirect('login')

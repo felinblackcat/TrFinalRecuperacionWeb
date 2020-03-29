@@ -1,0 +1,30 @@
+
+{% extends "adminPanel.html" %}
+{% block content %}
+<div class="container">
+<center><h1>usuarios del sistema</h1></center>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col"><h3>Nombre</h3></th>
+      <th scope="col"><h3>Administrador</h3></th>     
+    </tr>
+  </thead>
+  <tbody>
+    {%for usuario in ListaUsuarios%}
+        <tr>
+            <td><h5>{{usuario.username}}</h5></td>
+            
+            {%if usuario.is_superuser == True%}
+                <td>Si</td>
+            {%else%}
+                 <td>No</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+{% endblock %}
+
