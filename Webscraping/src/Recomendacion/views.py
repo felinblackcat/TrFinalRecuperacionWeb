@@ -28,7 +28,7 @@ def RegistrarUsuario(request):
     
     
     if(request.method=="POST"):
-        
+        #(user,email,pass)
         try:
             Usuario = User.objects.create_user(request.POST.get('email'),request.POST.get('email'),request.POST.get('password'))
             Usuario.save()
@@ -63,9 +63,9 @@ def Loguearse(request):
         password = request.POST['password']
         user = authenticate(username=username, password=password)
         
-        print(user)
+        
         if user is not None:
-            print("se logueo")
+            
             auth_login(request, user)
             return redirect('index')
         else:
@@ -74,7 +74,7 @@ def Loguearse(request):
         
         
         
-        #auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')     
+         
         
         
 
