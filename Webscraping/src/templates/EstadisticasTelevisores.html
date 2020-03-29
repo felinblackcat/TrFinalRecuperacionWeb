@@ -6,34 +6,42 @@
 
 {% block contentTelevisor %}
 
-{%if marca %}
-<div class="row justify-content-center">
-    <div class="col-sm">
-        <div class="card" style="width: 45rem;">
-            <img class="card-img-top" src="{{ marca.plot }}" alt="Card image cap">
-            <article class="card-body" >
-                <p class="card-text">Datos Recomilados de el atributo {{marca.name}}</p>
-            </article>
+{%if resultado %}
+
+    {%for columna in resultado %}
+    
+        <br>
+        <div class="row justify-content-center">
+            <div class="col-sm">
+                <div class="card" style="width: 45rem;">
+                    <img class="card-img-top" src="{{ columna.plot }}" alt="Card image cap">
+                    <article class="card-body" >
+                        <p class="card-text">Datos Recomilados de el atributo {{columna.name}}</p>
+                    </article>
+                </div>
+            </div>   
+            <div class="col-sm">
+                <div class="card">
+                  <div class="card-header"><h3>Estadistica Descriptiva para el atributo: {{columna.name}}</h3></div>
+                  <div class="card-body">
+                      <p>count: {{columna.estadistica.count}}</p>
+                      <p>mean:  {{columna.estadistica.mean}}</p>
+                      <p>std:   {{columna.estadistica.std}}</p>
+                      <p>min:   {{columna.estadistica.min}}</p>
+                      <p>25%:   {{columna.estadistica.v25}}</p>
+                      <p>50%:   {{columna.estadistica.v50}}</p>
+                      <p>75%:   {{columna.estadistica.v75}}</p>
+                      <p>max:   {{columna.estadistica.max}}</p>
+                  
+                  </div>
+                  
+                </div>
+            </div>  
         </div>
-    </div>   
-    <div class="col-sm">
-        <div class="card">
-          <div class="card-header"><h3>Estadistica Descriptiva para el atributo: {{marca.name}}</h3></div>
-          <div class="card-body">
-              <p>count: {{marca.estadistica.count}}</p>
-              <p>mean:  {{marca.estadistica.mean}}</p>
-              <p>std:   {{marca.estadistica.std}}</p>
-              <p>min:   {{marca.estadistica.min}}</p>
-              <p>25%:   {{marca.estadistica.v25}}</p>
-              <p>50%:   {{marca.estadistica.v50}}</p>
-              <p>75%:   {{marca.estadistica.v75}}</p>
-              <p>max:   {{marca.estadistica.max}}</p>
-          
-          </div>
-          
-        </div>
-    </div>  
-</div>
+    {%endfor%}
+    
+    
+    
 {%else%}
 {%endif%}
 

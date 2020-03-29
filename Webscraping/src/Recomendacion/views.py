@@ -45,31 +45,31 @@ def PlotGraficos(columna,keys,valores):
 
 @csrf_exempt
 def EstadisticasTelevisores(request):
+    resultado = []
     
     qs = Televisorbb.objects.all()
     df = read_frame(qs)    
     
-    #Estadisticas:
-    
-    #Calificacion =  df['calificacion'].describe()  
+    listaColumnas = ['marca','tamanopantalla','tipodisplay','resolucion']
     
     
-    Marca =  df.groupby(['marca'])['marca'].count()
-    EDM = list(Marca.describe())
-    keys = Marca.keys()
-    valores =list(Marca)
-    imuri = PlotGraficos('marca',keys,valores)    
+    for columna in listaColumnas:
+        Busqueda =  df.groupby([columna])[columna].count()
+        EstadisticaDescriptiva = list(Busqueda.describe())
+        keys = Busqueda.keys()
+        valores =list(Busqueda)
+        imuri = PlotGraficos('marca',keys,valores)    
     
-    Estadistica = {
-                      'count':EDM[0],
-                      'mean':EDM[1],
-                      'std':EDM[2],
-                      'min':EDM[3],
-                      'v25':EDM[4],
-                      'v50':EDM[5],
-                      'v75':EDM[6],
-                      'max':EDM[7], 
-                   }
+        Estadistica = {
+                          'count':EstadisticaDescriptiva[0],
+                          'mean':EstadisticaDescriptiva[1],
+                          'std':EstadisticaDescriptiva[2],
+                          'min':EstadisticaDescriptiva[3],
+                          'v25':EstadisticaDescriptiva[4],
+                          'v50':EstadisticaDescriptiva[5],
+                          'v75':EstadisticaDescriptiva[6],
+                          'max':EstadisticaDescriptiva[7], 
+                       }
     
     
     
@@ -77,55 +77,18 @@ def EstadisticasTelevisores(request):
     
     
     
-    context = { 
-               'marca': {    
-                       'name':'marca',
-                       'plot': imuri,
-                       'estadistica':Estadistica,
-                        }
-               
-               
-               }
-    
-    
-    
-    
-    
-    
-    
-    TamanoPantalla =  df.groupby(['tamanopantalla']).agg({'tamanopantalla':'count'})
-    ETP = TamanoPantalla.describe()
-    
-    
-    
-    
-    
-    TipoPantalla =  df.groupby(['tipodisplay']).agg({'tipodisplay':'count'})
-    EtipoP = TipoPantalla.describe()
-    
-    
-    
-    Resolucion =  df.groupby(['resolucion']).agg({'resolucion':'count'})
-    ER  = Resolucion.describe()
-    
-    
-    JEstadisticas = {'marca':'datos','TamanoPantalla':'datos','TipoPantalla':'datos','Resolucion':'datos','Precio':'datos','Calificacion':'datos'}
-    
-    
-    
-    
-    
-    #
-    
-    
-    
-        
-    
-    
-    
+        resultado.append(   {    
+                           'name':columna,
+                           'plot': imuri,
+                           'estadistica':Estadistica,
+                            })
+                       
+    context = {
+                'resultado':resultado
+            }
   
     
-    
+   
     
     return render(request,'EstadisticasTelevisores.html', context)
     
@@ -140,6 +103,7 @@ def SistemaRecomendacion(request):
 @csrf_exempt
 def MostrarUSuarios(request):
     Consulta = User.objects.all().values('username','is_superuser')
+    print(Consulta)
     context = {
                     'ListaUsuarios':Consulta,                    
                     }
