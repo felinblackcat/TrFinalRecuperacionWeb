@@ -70,7 +70,7 @@ def conexion_bd(tabla):
     return df_tabla
         
 
-def recomendacion(usuario):
+def colaborativo(usuario):
 
     df_calificacion = conexion_bd("calificacion")
     
