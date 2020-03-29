@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
+from Recomendacion.models import Televisorbb
 from django.db.utils import IntegrityError
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as do_logout
-
-
+from django_pandas.io import read_frame
+import pandas as pd
 @csrf_exempt
 def ListarTelevisores(request):
     return render(request,'ListarTelevisores.html')
@@ -14,7 +15,30 @@ def ListarTelevisores(request):
 
 @csrf_exempt
 def EstadisticasTelevisores(request):
-    return render(request,'EstadisticasTelevisores.html')
+    
+    qs = Televisorbb.objects.all()
+    df = read_frame(qs)
+    EstadisticasDescriptivas = df.describe()
+    Marca = df.groupby(['marca']).agg({'marca':'count'})
+    TamanoPantalla =  df.groupby(['tamanopantalla']).agg({'tamanopantalla':'count'})
+    ETP = TamanoPantalla.describe()
+    TipoPantalla =  df.groupby(['tipodisplay']).agg({'tipodisplay':'count'})
+    Resolucion =  df.groupby(['resolucion']).agg({'resolucion':'count'})
+    
+    print(ETP)
+    
+    
+    #
+    
+    
+    
+    context = {
+                 'ListaUsuarios':'cosa',                    
+                    }
+    
+    
+    
+    return render(request,'EstadisticasTelevisores.html', context)
 
 
 @csrf_exempt

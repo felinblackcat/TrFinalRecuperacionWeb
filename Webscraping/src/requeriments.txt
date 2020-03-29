@@ -13,3 +13,5 @@ djangorestframework
 scikit-surprise
 requests
 cfscrape
+django-pandas
+matplotlib
