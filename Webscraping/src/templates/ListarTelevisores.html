@@ -9,20 +9,27 @@
 <table class="table">
   <thead>
     <tr>
-      <th scope="col"><h3>Nombre</h3></th>
-      <th scope="col"><h3>Administrador</h3></th>     
+      <th scope="col">Modelo</th>
+      <th scope="col">Observaciones</th> 
+      <th scope="col">Marca</th>
+      <th scope="col">precio</th>     
+      <th scope="col">Tamaño Pantalla</th>
+      <th scope="col">Resolucion</th>
+      <th scope="col">UrlWalmart</th>
+      <th scope="col">UrlBestBuy</th>
+      <th scope="col">Calificacion</th>
+               
     </tr>
   </thead>
   <tbody>
-    {%for usuario in ListaUsuarios%}
+    {%for televisor in ListaTelevisores%}
         <tr>
-            <td><h5>{{usuario.username}}</h5></td>
             
-            {%if usuario.is_superuser == True%}
-                <td>Si</td>
-            {%else%}
-                 <td>No</td>
-            {% endif %}
+     <td>{{televisor.Modelo}}</td>
+      
+            
+               
+            
         </tr>
     {% endfor %}
   </tbody>
