@@ -6,7 +6,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as do_logout
 
-
+def userPanel(request):
+    return render(request,'userPanel.html')
 
 
 @csrf_exempt
@@ -67,7 +68,7 @@ def Loguearse(request):
         if user is not None:
             
             auth_login(request, user)
-            return redirect('index')
+            return redirect('userPanel')
         else:
             
             return redirect('login')

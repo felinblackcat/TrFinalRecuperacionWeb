@@ -1,7 +1,7 @@
 
 from django.contrib import admin
 from django.urls import path,include
-from Recomendacion.views import index,registro,RegistrarUsuario,login,Loguearse,deslog
+from Recomendacion.views import index,registro,RegistrarUsuario,login,Loguearse,deslog,userPanel
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -10,5 +10,6 @@ urlpatterns = [
     path('RegistrarUsuario/',RegistrarUsuario,name='RegistrarUsuario'),
     path('login/',login,name='login'),
     path('logeo/',Loguearse,name='Loguearse'),
-    path('deslog/',deslog,name='deslog')
+    path('deslog/',deslog,name='deslog'),
+    path('userPanel/',userPanel,name='userPanel'),
 ]
