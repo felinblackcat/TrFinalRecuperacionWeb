@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION comparar_items() RETURNS TRIGGER AS $comparar_items$
 		
 			IF (existe.datos_otra_tabla <> (NEW.marca||NEW.precio||NEW.TAMANOPANTALLA||NEW.RESOLUCION||NEW.tipodisplay)) THEN 
 		
-				IF (TG_TABLE_NAME = 'pruebatelevisorbb') THEN
+				IF (TG_TABLE_NAME = 'televisorbb') THEN
 					tabla_actual := 'www.bestbuy.com';
 					urlpbb := NEW.urlbb;
 					otra_tabla :=  'www.walmart.com';
@@ -51,7 +51,7 @@ CREATE OR REPLACE FUNCTION comparar_items() RETURNS TRIGGER AS $comparar_items$
 			END IF;
 
 		ELSE
-			IF (TG_TABLE_NAME = 'pruebatelevisorbb') THEN
+			IF (TG_TABLE_NAME = 'televisorbb') THEN
 				urlpbb := NEW.urlbb;
 				calificacion_televisor := NEW.calificacionbb;
 				urlpwalmart := '';
