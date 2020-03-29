@@ -92,7 +92,7 @@ def recomendacion(usuario):
     return top_n
     
 
-
+"""
 if __name__ == "__main__":
     
     usuario = "U1@gmail.com"
@@ -105,7 +105,7 @@ if __name__ == "__main__":
         print("Televisor recomendado para {} {} con calificación de {}".format(usuario,item,rating))
     
     print(top_n.values())  
-
+"""
 
 
 #df_usuario = conexion_bd("usuario")
