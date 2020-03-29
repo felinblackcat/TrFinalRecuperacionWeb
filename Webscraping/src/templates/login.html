@@ -1,0 +1,29 @@
+{% extends "TemplateBase.html" %}
+{% block content %}
+
+
+
+{% if user.is_authenticated %}
+    Session iniciada: {{user.email}}
+{%else%}
+
+<div class="container">
+    <center><h1>Login:</h1></center>
+    <form action="{% url 'Loguearse' %}" method="POST">{% csrf_token %}
+      <div class="form-group">
+        <label >Email address</label>
+        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">
+        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+      </div>
+      <div class="form-group">
+        <label name="password">Password</label>
+        <input type="password" class="form-control" name="password">
+      </div>
+      
+      <button type="submit" class="btn btn-primary">Iniciar Session</button>
+    </form>
+</div>
+{% endif %}  
+
+
+{% endblock %}

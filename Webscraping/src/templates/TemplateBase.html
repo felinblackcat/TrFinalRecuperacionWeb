@@ -1,27 +1,22 @@
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Proyecto final de recuperacion web donde se aplican tecnias de webscraping, webcrawling y sistemas de recomendacion.">
-    <meta name="author" content="Andres Felipe Vergara Posada">
-    <meta name="author" content="Fredy Londoño">
-    <meta name="author" content="Luis Carlos Arrieta">
-    <meta name="author" content="JHonier Serna">
-    <meta name="author" content="Chavez">
-    <link rel="icon" href="favicon.ico">
-    <title>TrabajoFinalRecuperacionWeb</title> 
-	  
-  	  {# Cargamos la librería #}
-	  {% load bootstrap4 %} 
-	  {# CSS Bootstrap #}
-	  {% bootstrap_css %}
-      {% load static %}
-      
-  </head>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Proyecto final de recuperacion web donde se aplican tecnias de webscraping, webcrawling y sistemas de recomendacion.">
+        <meta name="author" content="Andres Felipe Vergara Posada">
+        <meta name="author" content="Fredy Londoño">
+        <meta name="author" content="Luis Carlos Arrieta">
+        <meta name="author" content="JHonier Serna">
+        <meta name="author" content="Chavez">
+        <link rel="icon" href="favicon.ico">
+        <title>TrabajoFinalRecuperacionWeb</title> 
+      	  {# Cargamos la librería #}
+    	  {% load bootstrap4 %} 
+    	  {# CSS Bootstrap #}
+    	  {% bootstrap_css %}
+          {% load static %}
+     </head>
 <body>
-
-
-
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
       <a class="navbar-brand" href="{% url 'index' %}">
         <img src="{% static "images/horuseye.png" %}" alt="Logo" style="width:40px;">    
@@ -31,9 +26,12 @@
           <a class="nav-link" href="{% url 'registro' %}">Registro</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="">Login</a>
+          <a class="nav-link" href="{% url 'login' %}">Login</a>
         </li>
-            
+        {% if user.is_authenticated %}
+            {{user.email}}
+            <a href="{% url 'deslog' %}">Cerrar Session</a>
+        {% endif %}   
       
       </ul>
     </nav>
@@ -56,17 +54,7 @@
     <br>
     2020</center>
     </div>
-
-
           {# JS y jQuery Bootstrap #}
     	  {% bootstrap_javascript jquery='full' %}
-    	 
-            
-    
- 
-
- 
- 
- 
  </body>
 </html>
