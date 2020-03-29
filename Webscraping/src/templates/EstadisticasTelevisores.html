@@ -6,35 +6,36 @@
 
 {% block contentTelevisor %}
 
-
+{%if marca %}
 <div class="row justify-content-center">
     <div class="col-sm">
         <div class="card" style="width: 45rem;">
-            <img class="card-img-top" src="{{ plot }}" alt="Card image cap">
+            <img class="card-img-top" src="{{ marca.plot }}" alt="Card image cap">
             <article class="card-body" >
-                <p class="card-text">Datos Recomilados de el atributo {....}</p>
+                <p class="card-text">Datos Recomilados de el atributo {{marca.name}}</p>
             </article>
         </div>
     </div>   
     <div class="col-sm">
         <div class="card">
-          <div class="card-header"><h3>Estadistica Descriptiva para el atributo: {......}</h3></div>
+          <div class="card-header"><h3>Estadistica Descriptiva para el atributo: {{marca.name}}</h3></div>
           <div class="card-body">
-              <p>count</p>
-              <p>mean</p>
-              <p>std</p>
-              <p>min</p>
-              <p>25%</p>
-              <p>50%</p>
-              <p>75%</p>
-              <p>max</p>
+              <p>count: {{marca.estadistica.count}}</p>
+              <p>mean:  {{marca.estadistica.mean}}</p>
+              <p>std:   {{marca.estadistica.std}}</p>
+              <p>min:   {{marca.estadistica.min}}</p>
+              <p>25%:   {{marca.estadistica.v25}}</p>
+              <p>50%:   {{marca.estadistica.v50}}</p>
+              <p>75%:   {{marca.estadistica.v75}}</p>
+              <p>max:   {{marca.estadistica.max}}</p>
           
           </div>
           
         </div>
     </div>  
 </div>
-
+{%else%}
+{%endif%}
 
 
 

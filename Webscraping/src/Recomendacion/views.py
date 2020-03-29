@@ -55,15 +55,37 @@ def EstadisticasTelevisores(request):
     
     
     Marca =  df.groupby(['marca'])['marca'].count()
-    EDM = Marca.describe()
+    EDM = list(Marca.describe())
     keys = Marca.keys()
     valores =list(Marca)
     imuri = PlotGraficos('marca',keys,valores)    
-    print(list(EDM))
+    
+    Estadistica = {
+                      'count':EDM[0],
+                      'mean':EDM[1],
+                      'std':EDM[2],
+                      'min':EDM[3],
+                      'v25':EDM[4],
+                      'v50':EDM[5],
+                      'v75':EDM[6],
+                      'max':EDM[7], 
+                   }
     
     
     
+            
     
+    
+    
+    context = { 
+               'marca': {    
+                       'name':'marca',
+                       'plot': imuri,
+                       'estadistica':Estadistica,
+                        }
+               
+               
+               }
     
     
     
@@ -99,7 +121,7 @@ def EstadisticasTelevisores(request):
     
         
     
-    context = { 'plot': imuri}
+    
     
   
     
