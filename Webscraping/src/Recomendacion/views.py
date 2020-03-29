@@ -20,6 +20,10 @@ from matplotlib.dates import DateFormatter
 
 @csrf_exempt
 def ListarTelevisores(request):
+    Query = Televisorbb.objects.all()
+    
+    
+    
     return render(request,'ListarTelevisores.html')
 
 def PlotGraficos(columna,keys,valores):
@@ -32,11 +36,13 @@ def PlotGraficos(columna,keys,valores):
     ax.set_title(columna.upper()+" Televisores")    
     ax.set_xlabel(columna)
     ax.set_ylabel('Cantidad')    
-    ax.plot()    
+    ax.plot() 
+    fig.tight_layout()
+    figure = plt.gcf()
     buf = io.BytesIO()
-    canvas = FigureCanvasAgg(fig)
-    canvas.print_png(buf)    
-    fig.clear()
+    
+    figure.savefig(buf, format='png', transparent=True, quality=100, dpi=200)    
+    
     buf.seek(0)
     imsrc = base64.b64encode(buf.read())
     imuri = 'data:image/png;base64,{}'.format(urllib.parse.quote(imsrc))
