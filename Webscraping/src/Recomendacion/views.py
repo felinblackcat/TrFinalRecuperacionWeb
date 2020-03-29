@@ -23,15 +23,13 @@ def ListarTelevisores(request):
     return render(request,'ListarTelevisores.html')
 
 def PlotGraficos(columna,keys,valores):
-    fig = plt.figure() # Figure 
-    size = fig.get_size_inches()
-    print(size)
+    fig = plt.figure() # Figure   
     ax = fig.add_subplot(111) # Axes
     xx = range(len(valores))
     ax.bar(xx, valores, width=0.8, align='center')
     ax.set_xticks(xx)
     ax.set_xticklabels(keys, rotation='vertical')
-    ax.set_title(columna)
+    ax.set_title(columna.upper()+" Televisores")
     ax.set_xlabel(columna)
     ax.set_ylabel('Cantidad')    
     ax.plot()    
@@ -61,7 +59,7 @@ def EstadisticasTelevisores(request):
     keys = Marca.keys()
     valores =list(Marca)
     imuri = PlotGraficos('marca',keys,valores)    
-    print(EDM)
+    print(list(EDM))
     
     
     
