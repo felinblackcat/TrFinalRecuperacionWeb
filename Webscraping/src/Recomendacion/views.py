@@ -10,8 +10,9 @@ from django_pandas.io import read_frame
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 import matplotlib.pyplot as plt
 import io
-
-
+import base64
+import urllib
+from django.http import HttpResponse
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from matplotlib.dates import DateFormatter
@@ -21,6 +22,28 @@ from matplotlib.dates import DateFormatter
 def ListarTelevisores(request):
     return render(request,'ListarTelevisores.html')
 
+def PlotGraficos(columna,keys,valores):
+    fig = plt.figure() # Figure 
+    size = fig.get_size_inches()
+    print(size)
+    ax = fig.add_subplot(111) # Axes
+    xx = range(len(valores))
+    ax.bar(xx, valores, width=0.8, align='center')
+    ax.set_xticks(xx)
+    ax.set_xticklabels(keys, rotation='vertical')
+    ax.set_title(columna)
+    ax.set_xlabel(columna)
+    ax.set_ylabel('Cantidad')    
+    ax.plot()    
+    buf = io.BytesIO()
+    canvas = FigureCanvasAgg(fig)
+    canvas.print_png(buf)    
+    fig.clear()
+    buf.seek(0)
+    imsrc = base64.b64encode(buf.read())
+    imuri = 'data:image/png;base64,{}'.format(urllib.parse.quote(imsrc))
+    return imuri
+    
 
 @csrf_exempt
 def EstadisticasTelevisores(request):
@@ -34,37 +57,11 @@ def EstadisticasTelevisores(request):
     
     
     Marca =  df.groupby(['marca'])['marca'].count()
+    EDM = Marca.describe()
     keys = Marca.keys()
     valores =list(Marca)
-    fig = plt.figure(u'MARCA') # Figure
-    ax = fig.add_subplot(111) # Axes
-    xx = range(len(valores))
-    ax.bar(xx, valores, width=0.8, align='center')
-    ax.set_xticks(xx)
-    ax.set_xticklabels(keys)
-    ax.set_title("Marca")
-    ax.plot()
-    buf = io.BytesIO()
-    canvas = FigureCanvasAgg(fig)
-    canvas.print_png(buf)
-    buf.getvalue()
-    fig.clear()
-   
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    imuri = PlotGraficos('marca',keys,valores)    
+    print(EDM)
     
     
     
@@ -102,13 +99,16 @@ def EstadisticasTelevisores(request):
     
     
     
-    context = {
-                 'Estadisticas':buf.getvalue(),                    
-                    }
+        
+    
+    context = { 'plot': imuri}
+    
+  
     
     
     
     return render(request,'EstadisticasTelevisores.html', context)
+    
 
 
 @csrf_exempt
