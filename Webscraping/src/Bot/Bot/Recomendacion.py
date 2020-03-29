@@ -53,14 +53,22 @@ def get_top_n(predictions, n=5):
 def conexion_bd(tabla):
     #---------------------------------------------------------------------------Extraccion de datos base de datos---------------------------
     #Conexión a la Base de datos
-    db_connection= psycopg2.connect(user = "postgres",password = "Felingato1992",host = "127.0.0.1",port = "5432",database = "tvrec")
+    try:
+        db_connection= psycopg2.connect(user = "postgres",password = "Felingato1992",host = "127.0.0.1",port = "5432",database = "tvrec")
+        
+        # Extracción de datos de la Base de datos
+        sql_command = "SELECT * FROM {}.{};".format(str("public"), str(tabla))
+        df_tabla = pd.read_sql(sql_command, db_connection)
     
-    # Extracción de datos de la Base de datos
-    sql_command = "SELECT * FROM {}.{};".format(str("public"), str(tabla))
-    df_tabla = pd.read_sql(sql_command, db_connection)
-    
+    except (Exception, psycopg2.Error) as error :
+            print("Failed PostgreSQL connection", error)
+
+    finally:
+        db_connection.close()
+        print("PostgreSQL connection is closed")
+            
     return df_tabla
-    
+        
 
 def recomendacion(usuario):
 
@@ -84,7 +92,7 @@ def recomendacion(usuario):
     return top_n
     
 
-"""
+
 if __name__ == "__main__":
     
     usuario = "U1@gmail.com"
@@ -97,7 +105,7 @@ if __name__ == "__main__":
         print("Televisor recomendado para {} {} con calificación de {}".format(usuario,item,rating))
     
     print(top_n.values())  
-"""    
+
 
 
 #df_usuario = conexion_bd("usuario")
