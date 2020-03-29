@@ -17,7 +17,7 @@ CREATE TABLE TELEVISOR(
    urlwalmart				TEXT,
    URLBB				TEXT,
    calificaciOnwalmart		REAL,
-   ACTIVO				BOOLEAN				 NOT NULL
+   ACTIVO				BOOLEAN				 NOT NULL,
    Datos_otra_tabla	TEXT
    
 );

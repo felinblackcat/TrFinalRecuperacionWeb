@@ -7,6 +7,7 @@ CREATE OR REPLACE FUNCTION comparar_items() RETURNS TRIGGER AS $comparar_items$
 		urlpbb text;
 		urlpwalmart text;
 		datos_otra_tablai text := '';
+		calificacion_televisor real;
 	
 	BEGIN
 		SELECT * into existe from televisor where modelo = NEW.modelo;
@@ -52,12 +53,14 @@ CREATE OR REPLACE FUNCTION comparar_items() RETURNS TRIGGER AS $comparar_items$
 		ELSE
 			IF (TG_TABLE_NAME = 'pruebatelevisorbb') THEN
 				urlpbb := NEW.urlbb;
+				calificacion_televisor := NEW.calificacionbb;
 				urlpwalmart := '';
 			ELSE
 				urlpwalmart := NEW.urlwalmart;
+				calificacion_televisor := NEW.calificacionwalmart;
 				urlpbb := '';
 			END IF;
-			INSERT INTO televisor values(NEW.modelo,'',NEW.marca,NEW.precio,NEW.TAMANOPANTALLA,NEW.RESOLUCION,NEW.tipodisplay,urlpwalmart,urlpbb,true,'');
+			INSERT INTO televisor values(NEW.modelo,'',NEW.marca,NEW.precio,NEW.TAMANOPANTALLA,NEW.RESOLUCION,NEW.tipodisplay,urlpwalmart,urlpbb,calificacion_televisor,true,'');
 
 		END IF;
 		RETURN NULL;
