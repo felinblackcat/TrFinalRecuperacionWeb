@@ -3,7 +3,7 @@
 {% block content %}
 <div class="navegacion" >
     <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #4B515D";>
-        <a class="navbar-brand" href="{% url 'ListarTelevisores' %}">Mostrar Recomedaciones.</a>
+        <a class="navbar-brand" href="{% url 'MostrarRecomendaciones' %}">Mostrar Recomedaciones</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -11,10 +11,10 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'EstadisticasTelevisores' %}">Presicion del sistema.<span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="{% url 'MostrarPresicion' %}">Presicion del sistema</a>
                 </li>  
                 <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'EstadisticasTelevisores' %}">Opcion3<span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="{% url 'MostarCalificaciones' %}">Mostrar calificaciones</a>
                 </li> 
             </ul>
         <form class="form-inline my-2 my-lg-0" action="{% url 'BuscarTelevisor' %}" method="POST">{% csrf_token %}

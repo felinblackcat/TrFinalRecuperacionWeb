@@ -20,7 +20,7 @@ from matplotlib.dates import DateFormatter
 
 
 @csrf_exempt
-def BuscarCalificacion(request):
+def MostarCalificaciones(request):
     
     print(request.POST.get('busqueda'))
     if(request.POST):
@@ -31,7 +31,7 @@ def BuscarCalificacion(request):
         return render(request,'ListarTelevisores.html',context)
 
 @csrf_exempt
-def MostrarCalificacionesUsuarios(request):
+def MostrarRecomendaciones(request):
     
     print(request.POST.get('busqueda'))
     if(request.POST):
@@ -138,13 +138,6 @@ def EstadisticasTelevisores(request):
                           'v75':EstadisticaDescriptiva[6],
                           'max':EstadisticaDescriptiva[7], 
                        }
-    
-    
-    
-            
-    
-    
-    
         resultado.append(   {    
                            'name':columna,
                            'plot': imuri,
