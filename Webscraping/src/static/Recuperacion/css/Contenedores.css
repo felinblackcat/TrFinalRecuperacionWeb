@@ -1,0 +1,34 @@
+.navegacion{
+    
+    width:100%;
+    height:10%;
+    position: static;
+    float:top;
+}
+
+
+.content{
+    overflow-y: auto;
+    position: static;
+    width:85%;
+    height:80%;
+    float:right;
+
+}
+.tools{
+    
+    position: static;
+    width:15%;
+    height:80%;
+    float:left;
+}
+
+
+.footerMy{
+    position: relative;
+    clear:both;
+    width:100%;
+    height:auto;
+}
+
+
