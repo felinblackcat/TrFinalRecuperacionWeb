@@ -23,7 +23,7 @@ from matplotlib.dates import DateFormatter
 @csrf_exempt
 def BuscarTelevisor(request):
     
-    
+    print(request.POST.get('busqueda'))
     if(request.POST):
         Query = Televisor.objects.all().filter(modelo=request.POST.get('busqueda'))
         context = {
@@ -32,7 +32,7 @@ def BuscarTelevisor(request):
         
     
     
-    
+        
         return render(request,'ListarTelevisores.html',context)
     
 
