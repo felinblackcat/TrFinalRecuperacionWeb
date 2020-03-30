@@ -90,7 +90,7 @@ def colaborativo(usuario):
     predictions = SVD_Op.test(testset)
         
     top_n = get_top_n(predictions, n=10)
-    topuser = [modelo, calificacion for modelo, calificacion in top_n[usuario]]
+    topuser = [[modelo, calificacion] for modelo, calificacion in top_n[usuario]]
         
     return topuser
 #********************************************************************************
