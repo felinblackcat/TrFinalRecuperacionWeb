@@ -179,25 +179,23 @@ def contenido(usuario): #mail
     df_tv_norm = df_televisor.apply(lambda x: (x-df_televisor['precio'].min())/(df_televisor['precio'].max()-df_televisor['precio'].min()) if x.name == 'precio' else x, axis=0)
 
     #Computing the similarities (cosine distance)
-    recomendaciones = pd.DataFrame(columns = ['modelo','distancia'])
+    recomendaciones = []
     for index, fila in df_tv_norm.iterrows():
         fila = pd.DataFrame([fila], columns = df_tv_norm.columns)
         modelo = fila['modelo'].iloc[0]
         fila = fila.drop(columns = ['modelo'])
         dist_fila = cosine(perfil_usuario, fila)
-        recomendaciones.append({'modelo': modelo, 'distancia': dist_fila}, ignore_index=True) #vacia
-    print(recomendaciones)
+        recomendaciones.append([modelo, dist_fila])
     
-    """"#eliminacion de tvs inactivos
+    #Filtering out unreachable tvs
+    recomendaciones = pd.DataFrame(recomendaciones, columns = ['modelo', 'distancia'])
     recomendaciones = pd.merge(left=recomendaciones, right=inventario, on='modelo')
     recomendaciones = recomendaciones[recomendaciones.activo]
-    print(recomendaciones)
-    #resultados
-    recomendaciones = recomendaciones.sort_values(by='distancia', ascending=False)
-    top_n = get_top_n(predictions, n=10)
-    topuser = [modelo, calificacion for modelo, calificacion in top_n[usuario]]
-        
-    #return topuser"""
+    
+    #Output
+    recomendaciones = recomendaciones.sort_values(by='distancia', ascending=True)
+    recomendaciones = recomendaciones.values.tolist()
+    return recomendaciones
 #********************************************************************************
 #************************* FIN CONTENIDO *************************************
 #********************************************************************************
