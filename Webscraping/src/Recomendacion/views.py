@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from Recomendacion.models import Televisor
+from Recomendacion.models import Televisor,Calificacion
 from django.db.utils import IntegrityError
 from django.contrib import messages
 from django.contrib.auth import authenticate
@@ -44,8 +44,9 @@ def BuscarTelevisor(request):
 @csrf_exempt
 def ListarTelevisores(request):
     Query = Televisor.objects.all().values()
-    Query2 = Televisor.objects.filter(calificacion__correo__isnull=True ).values() | Televisor.objects.filter(calificacion__correo='correo' ).values()
-    print(Query2.query)
+    Query2 = Televisor.objects.all().filter(calificacion__correo__isnull=True ).values('calificacion') | Televisor.objects.all().filter(calificacion__correo='correo' ).values('calificacion')
+    Query3 = Televisor.objects.filter(calificacion__correo__isnull=True ).values('calificacion__calificacionusuario','modelo','observaciones','marca','precio','tamanopantalla','resolucion','tipodisplay','urlwalmart','urlbb')| Televisor.objects.all().filter(calificacion__correo='correo' ).values('calificacion__calificacionusuario','modelo','observaciones','marca','precio','tamanopantalla','resolucion','tipodisplay','urlwalmart','urlbb')
+    
     context = {
                     'ListaTelevisores':Query,                    
                     }
