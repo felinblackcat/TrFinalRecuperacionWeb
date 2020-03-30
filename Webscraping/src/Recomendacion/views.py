@@ -22,8 +22,64 @@ from itertools import chain
 
 
 @csrf_exempt
+def BuscarCalificacion(request):
+    
+    print(request.POST.get('busqueda'))
+    if(request.POST):
+        Query = Televisor.objects.all().filter(modelo=request.POST.get('busqueda'))
+        context = {
+                        'ListaTelevisores':Query,                    
+                        }
+        return render(request,'ListarTelevisores.html',context)
+
+@csrf_exempt
+def MostrarCalificacionesUsuarios(request):
+    
+    print(request.POST.get('busqueda'))
+    if(request.POST):
+        Query = Televisor.objects.all().filter(modelo=request.POST.get('busqueda'))
+        context = {
+                        'ListaTelevisores':Query,                    
+                        }
+        return render(request,'ListarTelevisores.html',context)
+
+@csrf_exempt
+def MostrarPresicion(request):
+    #etiquetas de los sistmeas = Colaborativo,Contenido
+    print(request.POST.get('busqueda'))
+    if(request.POST):
+        Query = Televisor.objects.all().filter(modelo=request.POST.get('busqueda'))
+        context = {
+                        'ListaTelevisores':Query,                    
+                        }
+        return render(request,'ListarTelevisores.html',context)
+
+
+
+###################################################################################################################################
+@csrf_exempt
+def BuscarTelevisor(request):
+    
+    print(request.POST.get('busqueda'))
+    if(request.POST):
+        Query = Televisor.objects.all().filter(modelo=request.POST.get('busqueda'))
+        context = {
+                        'ListaTelevisores':Query,                    
+                        }
+        return render(request,'ListarTelevisores.html',context)
+    
+
+
+
+
+
+
+@csrf_exempt
 def ListarTelevisores(request):
     Query = Televisor.objects.all().values()
+    Query2 = Televisor.objects.all().filter(calificacion__correo__isnull=True ).values('calificacion') | Televisor.objects.all().filter(calificacion__correo='correo' ).values('calificacion')
+    Query3 = Televisor.objects.filter(calificacion__correo__isnull=True ).values('calificacion__calificacionusuario','modelo','observaciones','marca','precio','tamanopantalla','resolucion','tipodisplay','urlwalmart','urlbb')| Televisor.objects.all().filter(calificacion__correo='correo' ).values('calificacion__calificacionusuario','modelo','observaciones','marca','precio','tamanopantalla','resolucion','tipodisplay','urlwalmart','urlbb')
+    
     context = {
                     'ListaTelevisores':Query,                    
                     }

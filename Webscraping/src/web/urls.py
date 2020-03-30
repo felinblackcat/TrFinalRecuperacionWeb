@@ -1,7 +1,7 @@
 
 from django.contrib import admin
 from django.urls import path,include
-from Recomendacion.views import index,registro,RegistrarUsuario,login,Loguearse,deslog,userPanel,AdminPanel,SistemaRecomendacion,MostrarUSuarios,GestionTelevisores,ListarTelevisores,EstadisticasTelevisores,MostrarTelevisores,ModalTelevisores
+from Recomendacion.views import index,registro,RegistrarUsuario,login,Loguearse,deslog,userPanel,AdminPanel,SistemaRecomendacion,MostrarUSuarios,GestionTelevisores,ListarTelevisores,EstadisticasTelevisores,MostrarTelevisores,ModalTelevisores,BuscarTelevisor
 from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [    
@@ -20,4 +20,5 @@ urlpatterns = [
     path('AdminPanel/GestionTelevisores/EstadisticasTelevisores',EstadisticasTelevisores,name='EstadisticasTelevisores'),
     path('AdminPanel/SistemaRecomendacion',SistemaRecomendacion,name='SistemaRecomendacion'),
     path('AdminPanel/MostrarUsuarios',MostrarUSuarios,name='MostrarUSuarios'),
+    path('AdminPanel/ResultadoBusqueda',BuscarTelevisor,name='BuscarTelevisor'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

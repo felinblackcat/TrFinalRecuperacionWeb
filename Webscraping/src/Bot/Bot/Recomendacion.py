@@ -98,6 +98,109 @@ def colaborativo(usuario):
 #********************************************************************************
 
 
+#****************************************************************************************************************
+#********** SISTEMA DE RECOMENDACION POR CONTENIDO **************************************************************
+#****************************************************************************************************************
+#Scipy helper methods
+def _validate_vector(u, dtype=None):
+    # Is order='c' really necessary?
+    u = np.asarray(u, dtype=dtype, order='c').squeeze()
+    # Ensure values such as u=1 and u=[1] still return 1-D arrays.
+    u = np.atleast_1d(u)
+    if u.ndim > 1:
+        raise ValueError("Input vector should be 1-D.")
+    return u
+
+def cosine(u, v):
+    """
+    Computes the Cosine distance between 1-D arrays.
+    The Cosine distance between `u` and `v`, is defined as
+    .. math::
+       1 - \\frac{u \\cdot v}
+                {||u||_2 ||v||_2}.
+    where :math:`u \\cdot v` is the dot product of :math:`u` and
+    :math:`v`.
+    Parameters
+    ----------
+    u : (N,) array_like
+        Input array.
+    v : (N,) array_like
+        Input array.
+    Returns
+    -------
+    cosine : double
+        The Cosine distance between vectors `u` and `v`.
+    """
+    u = _validate_vector(u)
+    v = _validate_vector(v)
+    dist = 1.0 - np.dot(u, v) / (np.linalg.norm(u) * np.linalg.norm(v))
+    return dist
+
+#Content-based recommendation
+def contenido(usuario): #mail
+
+    #Base data and prep
+    df_calificacion = conexion_bd("calificacion")
+    df_calificacion = df_calificacion.loc[df_calificacion['correo'] == usuario]
+    df_televisor = conexion_bd("televisor")
+    #dropping extra columns and extracting relevant data
+    inventario = df_televisor[['modelo', 'activo']].copy()
+    df_televisor = df_televisor.drop(columns=['observaciones', 'urlwalmart', 'urlbb','calificacionwalmart','activo','datos_otra_tabla'])
+    #one-hot encoding
+    df_televisor = pd.get_dummies(df_televisor,columns = ['marca','tamanopantalla','resolucion','tipodisplay'])
+    #dropping extra rows (tvs without this user's ratings)
+    df_televisor_usuario = df_televisor[df_televisor.modelo.isin(list(df_calificacion['modelo'].values))]
+    #merge the ratings (make sure the model and the ratings correspond to the rows)
+    datos = pd.merge(left=df_televisor_usuario, right=df_calificacion[['modelo','calificacionusuario']], on='modelo')
+    
+    #User profile computation
+    df_calificacion = datos[['modelo', 'calificacionusuario']].copy() #keep sorted values intact
+    datos = datos.drop(columns=['modelo', 'calificacionusuario'])
+    #multiply data by the ratings
+    datos = datos.fillna(0.0).mul(list(df_calificacion['calificacionusuario'].values), axis='rows')
+    #fill raw user profile with the aggregated data
+    perfil_basico = pd.DataFrame([datos.sum()], columns = datos.columns) #[] to let pandas know they're rows
+    #fill final profile with the normalized data
+    perfil_usuario = perfil_basico.copy()
+    #normalize price of a tv
+    perfil_usuario = perfil_usuario.apply(lambda x: x / sum(list(df_calificacion['calificacionusuario'].values)) if x.name == 'precio' else x, axis=0) 
+    datos = datos.div(list(df_calificacion['calificacionusuario'].values), axis='rows')
+    perfil_usuario = perfil_usuario.apply(lambda x: (x-datos['precio'].min()) / (datos['precio'].max()-datos['precio'].min()) if x.name == 'precio' else x, axis=0)
+    #normalize the dummy columns
+    columnas_dummy = perfil_basico.filter(regex='marca_(.*)') #select all dummy columns starting with marca_
+    suma_dummy = columnas_dummy.sum(axis = 1)  #the sum of dummy values is the same for each dummy grouping
+    perfil_usuario = perfil_usuario.apply(lambda x: x / suma_dummy if x.name != 'precio' else x, axis=0) 
+    #TODO: Enviar perfil_usuario a la base de datos, quiza removiendo todos las columnas con valor = 0
+    
+    #Prepare TV table
+    #drop already rated tvs
+    df_televisor = df_televisor[~df_televisor.modelo.isin(list(df_calificacion['modelo'].values))]
+    #normalize the price of the tvs
+    df_tv_norm = df_televisor.apply(lambda x: (x-df_televisor['precio'].min())/(df_televisor['precio'].max()-df_televisor['precio'].min()) if x.name == 'precio' else x, axis=0)
+
+    #Computing the similarities (cosine distance)
+    recomendaciones = []
+    for index, fila in df_tv_norm.iterrows():
+        fila = pd.DataFrame([fila], columns = df_tv_norm.columns)
+        modelo = fila['modelo'].iloc[0]
+        fila = fila.drop(columns = ['modelo'])
+        dist_fila = cosine(perfil_usuario, fila)
+        recomendaciones.append([modelo, dist_fila])
+    
+    #Filtering out unreachable tvs
+    recomendaciones = pd.DataFrame(recomendaciones, columns = ['modelo', 'distancia'])
+    recomendaciones = pd.merge(left=recomendaciones, right=inventario, on='modelo')
+    recomendaciones = recomendaciones[recomendaciones.activo]
+    
+    #Output
+    recomendaciones = recomendaciones.sort_values(by='distancia', ascending=True)
+    recomendaciones = recomendaciones.values.tolist()
+    return recomendaciones
+#********************************************************************************
+#************************* FIN CONTENIDO *************************************
+#********************************************************************************
+
+
 #**********************************************************************************
 #************************** SISTEMA HIBRIDI ***************************************
 #**********************************************************************************

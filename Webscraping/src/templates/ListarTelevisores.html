@@ -1,14 +1,15 @@
 {% extends "GestionTelevisores.html" %}
 
 {% block contentTelevisor %}
+
 <center><h1>Televisores del sistema</h1></center>
 <table class="table">
-  <thead>
+  <thead style="{display: block;}">
     <tr>
       <th scope="col">Modelo</th>
       <th scope="col">Observaciones</th> 
       <th scope="col">Marca</th>
-      <th scope="col">precio</th>     
+      <th scope="col">Precio</th>     
       <th scope="col">Tamaño Pantalla</th>
       <th scope="col">Resolucion</th>
       <th scope="col">Tipo display</th>
@@ -21,22 +22,16 @@
   <tbody>
     {%for televisor in ListaTelevisores%}
         <tr>
-            
-     <td>{{televisor.modelo}}</td>
-     <td>{{televisor.observaciones}}</td>
-     <td>{{televisor.marca}}</td>
-     <td>{{televisor.precio}}</td>
-     <td>{{televisor.tamanopantalla}}</td>
-     <td>{{televisor.resolucion}}</td>
-     <td>{{televisor.tipodisplay}}</td>
-     
-     <td>{{televisor.urlwalmart}}</td>
-     <td>{{televisor.urlbb}}</td>
-     <td>{{televisor.calificacionwalmart}}</td>
-     
-            
-               
-            
+         <td>{{televisor.modelo}}</td>
+         <td>{{televisor.observaciones}}</td>
+         <td>{{televisor.marca}}</td>
+         <td>{{televisor.precio}}</td>
+         <td>{{televisor.tamanopantalla}}</td>
+         <td>{{televisor.resolucion}}</td>
+         <td>{{televisor.tipodisplay}}</td>         
+         <td>{{televisor.urlwalmart}}</td>
+         <td>{{televisor.urlbb}}</td>
+         <td>{{televisor.calificacionwalmart}}</td>
         </tr>
     {% endfor %}
   </tbody>
