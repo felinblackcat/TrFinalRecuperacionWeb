@@ -7,38 +7,97 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as do_logout
 from django_pandas.io import read_frame
-import pandas as pd
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+import matplotlib.pyplot as plt
+import io
+import base64
+import urllib
+from django.http import HttpResponse
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+from matplotlib.dates import DateFormatter
+
+
 @csrf_exempt
 def ListarTelevisores(request):
+    Query = Televisorbb.objects.all()
+    
+    
+    
     return render(request,'ListarTelevisores.html')
 
+def PlotGraficos(columna,keys,valores):
+    fig = plt.figure() # Figure   
+    ax = fig.add_subplot(111) # Axes
+    xx = range(len(valores))
+    ax.bar(xx, valores, width=0.8, align='center')
+    ax.set_xticks(xx)
+    ax.set_xticklabels(keys, rotation='vertical')
+    ax.set_title(columna.upper()+" Televisores")    
+    ax.set_xlabel(columna)
+    ax.set_ylabel('Cantidad')    
+    ax.plot() 
+    fig.tight_layout()
+    figure = plt.gcf()
+    buf = io.BytesIO()
+    
+    figure.savefig(buf, format='png', transparent=True, quality=100, dpi=200)    
+    
+    buf.seek(0)
+    imsrc = base64.b64encode(buf.read())
+    imuri = 'data:image/png;base64,{}'.format(urllib.parse.quote(imsrc))
+    return imuri
+    
 
 @csrf_exempt
 def EstadisticasTelevisores(request):
+    resultado = []
     
     qs = Televisorbb.objects.all()
-    df = read_frame(qs)
-    EstadisticasDescriptivas = df.describe()
-    Marca = df.groupby(['marca']).agg({'marca':'count'})
-    TamanoPantalla =  df.groupby(['tamanopantalla']).agg({'tamanopantalla':'count'})
-    ETP = TamanoPantalla.describe()
-    TipoPantalla =  df.groupby(['tipodisplay']).agg({'tipodisplay':'count'})
-    Resolucion =  df.groupby(['resolucion']).agg({'resolucion':'count'})
+    df = read_frame(qs)    
     
-    print(ETP)
+    listaColumnas = ['marca','tamanopantalla','tipodisplay','resolucion']
     
     
-    #
+    for columna in listaColumnas:
+        Busqueda =  df.groupby([columna])[columna].count()
+        EstadisticaDescriptiva = list(Busqueda.describe())
+        keys = Busqueda.keys()
+        valores =list(Busqueda)
+        imuri = PlotGraficos(columna,keys,valores)    
+    
+        Estadistica = {
+                          'count':EstadisticaDescriptiva[0],
+                          'mean':EstadisticaDescriptiva[1],
+                          'std':EstadisticaDescriptiva[2],
+                          'min':EstadisticaDescriptiva[3],
+                          'v25':EstadisticaDescriptiva[4],
+                          'v50':EstadisticaDescriptiva[5],
+                          'v75':EstadisticaDescriptiva[6],
+                          'max':EstadisticaDescriptiva[7], 
+                       }
     
     
     
+            
+    
+    
+    
+        resultado.append(   {    
+                           'name':columna,
+                           'plot': imuri,
+                           'estadistica':Estadistica,
+                            })
+                       
     context = {
-                 'ListaUsuarios':'cosa',                    
-                    }
+                'resultado':resultado
+            }
+  
     
-    
+   
     
     return render(request,'EstadisticasTelevisores.html', context)
+    
 
 
 @csrf_exempt
@@ -50,6 +109,7 @@ def SistemaRecomendacion(request):
 @csrf_exempt
 def MostrarUSuarios(request):
     Consulta = User.objects.all().values('username','is_superuser')
+    print(Consulta)
     context = {
                     'ListaUsuarios':Consulta,                    
                     }
