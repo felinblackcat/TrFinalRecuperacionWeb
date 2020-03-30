@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from Recomendacion.models import Televisor
+from Recomendacion.models import Televisor,Calificacion
 from django.db.utils import IntegrityError
 from django.contrib import messages
 from django.contrib.auth import authenticate
@@ -18,6 +18,8 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from matplotlib.dates import DateFormatter
 
+from itertools import chain
+
 
 @csrf_exempt
 def ListarTelevisores(request):
@@ -26,11 +28,34 @@ def ListarTelevisores(request):
                     'ListaTelevisores':Query,                    
                     }
             
-    
-    
-    
-    
     return render(request,'ListarTelevisores.html',context)
+
+def MostrarTelevisores(request):
+    
+    usuario_actual = request.user.username
+    
+    #Televisores = Televisor.objects.all().values()
+    #calificaciones_usuario = Calificacion.objects.filter(correo=usuario_actual)
+    #result_list = list(chain(Televisores,calificaciones_usuario))
+    #Query = Televisor.objects.filter(calificacion__correo__isnull=True ).values() | Televisor.objects.filter(calificacion__correo='correo' ).values()
+    Query = Televisor.objects.filter(calificacion__correo__isnull=True ).values('calificacion__calificacionusuario','modelo','observaciones','marca','precio','tamanopantalla','resolucion','tipodisplay','urlwalmart','urlbb')| Televisor.objects.all().filter(calificacion__correo=usuario_actual ).values('calificacion__calificacionusuario','modelo','observaciones','marca','precio','tamanopantalla','resolucion','tipodisplay','urlwalmart','urlbb')
+
+    context = {
+                    'ListaTelevisores':Query,                    
+                    }
+    
+    
+    return render(request,'MostrarTelevisores.html',context)
+
+@csrf_exempt
+def ModalTelevisores(request):
+    
+    if(request.method=="POST"):
+        context = {
+                'datos':{'observaciones':request.POST.get('observaciones'),'modelo':request.POST.get('modelo'),'calificacion':request.POST.get('calificacion'),'link1':request.POST.get('link1'),'link2':request.POST.get('link2')},
+                }
+        
+    return render(request,'ModalTelevisores.html',context)
 
 def PlotGraficos(columna,keys,valores):
     fig = plt.figure() # Figure   
@@ -144,6 +169,8 @@ def login(request):
 @csrf_exempt   
 def registro(request):      
     return render(request,'registro.html')
+
+
 
 
 @csrf_exempt    

@@ -1,7 +1,7 @@
 
 from django.contrib import admin
 from django.urls import path,include
-from Recomendacion.views import index,registro,RegistrarUsuario,login,Loguearse,deslog,userPanel,AdminPanel,SistemaRecomendacion,MostrarUSuarios,GestionTelevisores,ListarTelevisores,EstadisticasTelevisores
+from Recomendacion.views import index,registro,RegistrarUsuario,login,Loguearse,deslog,userPanel,AdminPanel,SistemaRecomendacion,MostrarUSuarios,GestionTelevisores,ListarTelevisores,EstadisticasTelevisores,MostrarTelevisores,ModalTelevisores
 from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [    
@@ -13,6 +13,8 @@ urlpatterns = [
     path('deslog/',deslog,name='deslog'),
     path('userPanel/',userPanel,name='userPanel'),    
     path('AdminPanel/',AdminPanel,name='AdminPanel'),
+    path('userPanel/MostrarTelevisores',MostrarTelevisores,name='MostrarTelevisores'),
+    path('userPanel/MostrarTelevisores/ModalTelevisores',ModalTelevisores,name='ModalTelevisores'),
     path('AdminPanel/GestionTelevisores',GestionTelevisores,name='GestionTelevisores'),
     path('AdminPanel/GestionTelevisores/listarTelevisores',ListarTelevisores,name='ListarTelevisores'),
     path('AdminPanel/GestionTelevisores/EstadisticasTelevisores',EstadisticasTelevisores,name='EstadisticasTelevisores'),
