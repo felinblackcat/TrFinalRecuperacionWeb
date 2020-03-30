@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from Recomendacion.models import Televisorbb
 from django.db.utils import IntegrityError
+from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as do_logout
@@ -147,17 +148,20 @@ def RegistrarUsuario(request):
         try:
             Usuario = User.objects.create_user(request.POST.get('email'),request.POST.get('email'),request.POST.get('password'),first_name=request.POST.get('nombre'))
             Usuario.save()
-            context = {
-                    'mensaje':{'usuario':request.POST.get('email'),'mensaje':'Registrado Correctamente.'},                    
-                    }
+            #context = {
+            #        'mensaje':{'usuario':request.POST.get('email'),'mensaje':'Registrado Correctamente.'},                    
+            #        }
+            messages.success(request,'El usuario '+request.POST.get('email')+' se ha registrado correctamente')
     
-            return render(request,'index.html',context)  
+            return render(request,'index.html')  
+        
         except IntegrityError:
-            context = {
-                    'mensaje':{'usuario':request.POST.get('email'),'mensaje':'Error usuario ya registrado.'},                    
-                    }
+            #context = {
+            #        'mensaje':{'usuario':request.POST.get('email'),'mensaje':'Error usuario ya registrado.'},                    
+            #        }
+            messages.error(request,'El usuario '+request.POST.get('email')+' ya esta registrado')
     
-            return render(request,'index.html',context)      
+            return render(request,'index.html')      
             
 def deslog(request):
     do_logout(request)
