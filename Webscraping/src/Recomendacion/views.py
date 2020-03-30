@@ -19,7 +19,42 @@ from matplotlib.figure import Figure
 from matplotlib.dates import DateFormatter
 
 
+@csrf_exempt
+def BuscarCalificacion(request):
+    
+    print(request.POST.get('busqueda'))
+    if(request.POST):
+        Query = Televisor.objects.all().filter(modelo=request.POST.get('busqueda'))
+        context = {
+                        'ListaTelevisores':Query,                    
+                        }
+        return render(request,'ListarTelevisores.html',context)
 
+@csrf_exempt
+def MostrarCalificacionesUsuarios(request):
+    
+    print(request.POST.get('busqueda'))
+    if(request.POST):
+        Query = Televisor.objects.all().filter(modelo=request.POST.get('busqueda'))
+        context = {
+                        'ListaTelevisores':Query,                    
+                        }
+        return render(request,'ListarTelevisores.html',context)
+
+@csrf_exempt
+def MostrarPresicion(request):
+    #etiquetas de los sistmeas = Colaborativo,Contenido
+    print(request.POST.get('busqueda'))
+    if(request.POST):
+        Query = Televisor.objects.all().filter(modelo=request.POST.get('busqueda'))
+        context = {
+                        'ListaTelevisores':Query,                    
+                        }
+        return render(request,'ListarTelevisores.html',context)
+
+
+
+###################################################################################################################################
 @csrf_exempt
 def BuscarTelevisor(request):
     
@@ -29,10 +64,6 @@ def BuscarTelevisor(request):
         context = {
                         'ListaTelevisores':Query,                    
                         }
-        
-    
-    
-        
         return render(request,'ListarTelevisores.html',context)
     
 
