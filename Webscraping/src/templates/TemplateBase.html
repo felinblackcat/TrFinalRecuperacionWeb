@@ -15,6 +15,7 @@
     	  {# CSS Bootstrap #}
     	  {% bootstrap_css %}
           {% load static %}
+          
      </head>
 <body>
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
@@ -70,13 +71,14 @@
     
     
     <div class="row h-100">	
-    	<div class="col-2 bg-danger">
+    	<div class="col-md-2 bg-dark">
     	{% block tools %}{% endblock %}    	
     	
     	
     	</div>
-    	<div class="col-10 bg-info">{% block content %}{% endblock %} </div>
+    	<div class="col-10 bg-light">{% block content %}{% endblock %} </div>
     </div>
+    
     <div class="w-100 bg-dark text-white" ><center> <br>Estudiantes Ingenieria Sistema E Informatica
     <br>Universidad Nacional de Colombia Sede Medellin<br>
     <br>

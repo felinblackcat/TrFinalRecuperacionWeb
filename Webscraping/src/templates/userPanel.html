@@ -1,12 +1,125 @@
 {% extends "TemplateBase.html" %}
+
+
+
+
 {% block content %}
-azul
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+<style type="text/css">
+.param {
+    margin-bottom: 7px;
+    line-height: 1.4;
+}
+.param-inline dt {
+    display: inline-block;
+}
+.param dt {
+    margin: 0;
+    margin-right: 7px;
+    font-weight: 600;
+}
+.param-inline dd {
+    vertical-align: baseline;
+    display: inline-block;
+}
+
+.param dd {
+    margin: 0;
+    vertical-align: baseline;
+} 
+
+.shopping-cart-wrap .price {
+    color: #007bff;
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 5px;
+    display: block;
+}
+var {
+    font-style: normal;
+}
+
+.media img {
+    margin-right: 1rem;
+}
+.img-sm {
+    width: 90px;
+    max-height: 75px;
+    object-fit: cover;
+}
+</style>
+
+
+
+<div class="container">
+
+
+    <div class="card">
+        <table class="table table-hover shopping-cart-wrap">
+            <thead class="text-muted">
+                <tr>
+                      <th scope="col">Imagen</th>
+                      <th scope="col" width="120">Modelo</th>
+                      <th scope="col" width="120">Marca</th>
+                      <th scope="col" width="120">Tamaño</th>
+                      <th scope="col" width="120">Resolución</th>
+                      <th scope="col" width="120">Tipo Display</th>
+                      <th scope="col" width="120">Precio</th>
+                      <th scope="col" width="120">Calificación</th>
+                  
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                	<td>
+                        <figure class="media">
+                        	<div class="img-wrap"><img src="http://bootstrap-ecommerce.com/main/images/items/2.jpg" class="img-thumbnail img-sm"></div>
+                        	
+                        </figure> 
+                	</td>
+                	<td> 
+                		<h4>Modelo</h4> 
+                	</td>
+                	<td> 
+                		<h4>Marca</h4>
+                	</td>
+                	<td> 
+                    	<h4>Tamaño</h4>
+                	</td>
+                	<td> 
+                		<h4>Resoluci</h4>
+                	</td>
+                	<td> 
+                		<h4>Display</h4>
+                	</td>
+                	<td> 
+                		<h4>Precio</h4>
+                	</td>
+                	<td> 
+                		<h4>Calificación</h4>
+                	</td>
+                	
+                </tr>   
+            
+            </tbody>
+        </table>
+    </div>
+</div> 
 
 
 {% endblock %}
 
 {% block tools %}
-ver televisores
+
+
+
+<div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+  <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Ver Televisores</a>
+  <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Otra opción</a>
+  <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Otra opción</a>
+  <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Otra opción</a>
+</div>
 
 
 {% endblock %} 
