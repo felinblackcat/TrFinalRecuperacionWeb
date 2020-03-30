@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from Recomendacion.models import Televisorbb
+from Recomendacion.models import Televisor
 from django.db.utils import IntegrityError
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
@@ -20,11 +20,16 @@ from matplotlib.dates import DateFormatter
 
 @csrf_exempt
 def ListarTelevisores(request):
-    Query = Televisorbb.objects.all()
+    Query = Televisor.objects.all().values()
+    context = {
+                    'ListaTelevisores':Query,                    
+                    }
+            
     
     
     
-    return render(request,'ListarTelevisores.html')
+    
+    return render(request,'ListarTelevisores.html',context)
 
 def PlotGraficos(columna,keys,valores):
     fig = plt.figure() # Figure   
@@ -53,7 +58,7 @@ def PlotGraficos(columna,keys,valores):
 def EstadisticasTelevisores(request):
     resultado = []
     
-    qs = Televisorbb.objects.all()
+    qs = Televisor.objects.all()
     df = read_frame(qs)    
     
     listaColumnas = ['marca','tamanopantalla','tipodisplay','resolucion']
@@ -109,7 +114,7 @@ def SistemaRecomendacion(request):
 @csrf_exempt
 def MostrarUSuarios(request):
     Consulta = User.objects.all().values('username','is_superuser')
-    print(Consulta)
+    
     context = {
                     'ListaUsuarios':Consulta,                    
                     }

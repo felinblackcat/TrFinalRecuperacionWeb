@@ -11,6 +11,7 @@
       <th scope="col">precio</th>     
       <th scope="col">Tamaño Pantalla</th>
       <th scope="col">Resolucion</th>
+      <th scope="col">Tipo display</th>
       <th scope="col">UrlWalmart</th>
       <th scope="col">UrlBestBuy</th>
       <th scope="col">Calificacion</th>
@@ -21,8 +22,18 @@
     {%for televisor in ListaTelevisores%}
         <tr>
             
-     <td>{{televisor.Modelo}}</td>
-      
+     <td>{{televisor.modelo}}</td>
+     <td>{{televisor.observaciones}}</td>
+     <td>{{televisor.marca}}</td>
+     <td>{{televisor.precio}}</td>
+     <td>{{televisor.tamanopantalla}}</td>
+     <td>{{televisor.resolucion}}</td>
+     <td>{{televisor.tipodisplay}}</td>
+     
+     <td>{{televisor.urlwalmart}}</td>
+     <td>{{televisor.urlbb}}</td>
+     <td>{{televisor.calificacionwalmart}}</td>
+     
             
                
             
