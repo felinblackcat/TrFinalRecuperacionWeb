@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from Recomendacion.models import Televisor,Calificacion
+from Recomendacion.models import Televisor,Calificacion,Precision
 from django.db.utils import IntegrityError
 from django.contrib import messages
 from django.contrib.auth import authenticate
@@ -9,6 +9,7 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as do_logout
 from django_pandas.io import read_frame
 from matplotlib.backends.backend_agg import FigureCanvasAgg
+from django.db.models import Count
 import matplotlib.pyplot as plt
 import io
 import base64
@@ -23,36 +24,37 @@ from itertools import chain
 
 @csrf_exempt
 def MostarCalificaciones(request):
+        Query=Calificacion.objects.all().order_by('correo').values()
     
-    print(request.POST.get('busqueda'))
-    if(request.POST):
-        Query = Televisor.objects.all().filter(modelo=request.POST.get('busqueda'))
         context = {
-                        'ListaTelevisores':Query,                    
+                        'ListaCalificaiones':Query,                    
                         }
-        return render(request,'ListarTelevisores.html',context)
+        return render(request,'MostrarCalificaciones.html',context)
 
 @csrf_exempt
 def MostrarRecomendaciones(request):
-    
-    print(request.POST.get('busqueda'))
-    if(request.POST):
-        Query = Televisor.objects.all().filter(modelo=request.POST.get('busqueda'))
+        Query=Precision.objects.all().order_by('modelo').values()
+        
         context = {
-                        'ListaTelevisores':Query,                    
+                        'ListaRecomendaciones':Query,                    
                         }
-        return render(request,'ListarTelevisores.html',context)
+        return render(request,'MostrarRecomendaciones.html',context)
 
 @csrf_exempt
 def MostrarPresicion(request):
-    #etiquetas de los sistmeas = Colaborativo,Contenido
-    print(request.POST.get('busqueda'))
-    if(request.POST):
-        Query = Televisor.objects.all().filter(modelo=request.POST.get('busqueda'))
+        TotalSistema=Precision.objects.all().annotate(total=Count('modelo')).values('total')
+        AcertividadTotal = Precision.objects.all().filter(calificacion="True").annotate(total=Count('modelo')).values('total')
+        
+        TotalColaborativo = Precision.objects.all().filter(modelo='Colaborativo').annotate(total=Count('modelo')).values('total')
+        AcertividadColaborativo = Precision.objects.all().filter(modelo='Colaborativo',calificacion="True").annotate(total=Count('modelo')).values('total')
+        
+        TotalContenido = Precision.objects.all().filter(modelo='Contenido').annotate(total=Count('modelo')).values('total')
+        AcertividadContenido = Precision.objects.all().filter(modelo='Contenido',calificacion="True").annotate(total=Count('modelo')).values('total')
+        print(AcertividadColaborativo.query)
         context = {
-                        'ListaTelevisores':Query,                    
+                        'ListaTelevisores':2,                    
                         }
-        return render(request,'ListarTelevisores.html',context)
+        return render(request,'MostrarPresision.html',context)
 
 
 

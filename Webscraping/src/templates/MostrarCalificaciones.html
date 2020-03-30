@@ -1,0 +1,25 @@
+{% extends "SistemaRecomendacion.html" %}
+{% block contentRecomendacion %}
+    
+    <center><h1>Calificaciones</h1></center>
+<table class="table">
+  <thead style="{display: block;}">
+    <tr>
+      <th scope="col">Usuario</th>
+      <th scope="col">Modelo Televisor</th> 
+      <th scope="col">Calificacion</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+    {%for calificacion in ListaCalificaiones%}
+        <tr>
+         <td>{{calificacion.correo}}</td>
+         <td>{{calificacion.modelo}}</td>
+         <td>{{calificacion.calificacionusuario}}</td>
+         
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -131,7 +131,7 @@ class DjangoSession(models.Model):
 
 class Precision(models.Model):
     modelo = models.TextField(blank=True, null=True)
-    calificacion = models.FloatField(blank=True, null=True)
+    calificacion = models.TextField(blank=True, null=True)
     sistema_recomendacion = models.TextField(blank=True, null=True)
 
     class Meta:
