@@ -202,7 +202,7 @@ def contenido(usuario): #mail
 
 
 #**********************************************************************************
-#************************** SISTEMA HIBRIDI ***************************************
+#************************** SISTEMA HIBRIDO ***************************************
 #**********************************************************************************
 
 #Funcion para calcular y modificar lso pesos d los sistemas basado en su precision
@@ -263,7 +263,7 @@ def recomendacion (usuario):
 
   topContenido = contenido()
 #cambiar la escala numerica de la valoracion y agregar la etiquera del RS
-  topContenido = [[x[0], cambio(x[1],-1.0,1.0,1.0,5.0), "Contenido"] for x in topColaborativo]
+  topContenido = [[x[0], cambio(x[1],0.0,1.0,1.0,5.0), "Contenido"] for x in topColaborativo]
   topContenido.sort(key= lambda cal : cal[1], reverse=True)
   
 #  multiplicarl la calificación por el peso del RS
