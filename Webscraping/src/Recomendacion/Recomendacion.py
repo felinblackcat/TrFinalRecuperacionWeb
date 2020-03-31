@@ -222,7 +222,6 @@ def contenido(usuario): #mail
     columnas_dummy = perfil_basico.filter(regex='marca_(.*)') #select all dummy columns starting with marca_
     suma_dummy = columnas_dummy.sum(axis = 1)  #the sum of dummy values is the same for each dummy grouping
     perfil_usuario = perfil_usuario.apply(lambda x: x / suma_dummy if x.name != 'precio' else x, axis=0) 
-    #TODO: Enviar perfil_usuario a la base de datos, quiza removiendo todos las columnas con valor = 0
     
     #Prepare TV table
     #drop already rated tvs
