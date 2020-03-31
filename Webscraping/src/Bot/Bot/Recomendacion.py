@@ -210,7 +210,7 @@ def contenido(usuario): #mail
 #Funcion para calcular y modificar lso pesos d los sistemas basado en su precision
 def pesos():
   #consultar la tabla precision para computar los aciertos de las recomendaciones
-  df_precision = conexion_bd("precision")
+  df_precision = conexion_bd("Precision")
  #Verificar que el dataframe que almacena la consulta no este vacio
   if not df_precision.empty:
       
@@ -266,8 +266,7 @@ def recomendacion (usuario):
   topContenido = contenido()
 #cambiar la escala numerica de la valoracion y agregar la etiquera del RS
   topContenido = [[x[0], cambio(x[1],0.0,1.0,1.0,5.0), "Contenido"] for x in topColaborativo]
-  topContenido.sort(key= lambda cal : cal[1], reverse=True)
-  
+    
 #  multiplicarl la calificación por el peso del RS
   topContenido = [[x[0],x[1]*wContenido, x[2]] for x in topContenido]
 
