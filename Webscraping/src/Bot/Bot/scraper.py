@@ -11,7 +11,7 @@ from scrapy.crawler import CrawlerRunner
 from twisted.internet import reactor, defer
 from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
-
+import psycopg2
 
 
 
@@ -37,13 +37,9 @@ def startScan():
 
 startScan()
 reactor.run()
+db_connection= psycopg2.connect(user = "postgres",password = "Felingato1992",host = "127.0.0.1",port = "5432",database = "tvrec")
+cursor = db_connection.cursor()
+cursor.callproc('desactivar_items')
+cursor.close()
+db_connection.close()
 
-
-
-'''
-
-d = runner.crawl(TelevisoreswalmartSpider)
-d.addBoth(lambda _: reactor.stop())
-reactor.run() # the script will block here until the crawling is finished
-
-'''
