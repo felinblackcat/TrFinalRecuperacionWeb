@@ -9,6 +9,7 @@ from surprise import Dataset
 from surprise.model_selection import cross_validate
 from surprise import Reader
 import numpy as np
+
 import pandas as pd
 import pandas.io.sql as psql
 import psycopg2
@@ -24,7 +25,7 @@ from collections import defaultdict
 #***********************************************************************************
 #******************************* Funciones *****************************************
 #***********************************************************************************
-*-----------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------
 def get_top_n(predictions, n=5):
     '''Return the top-N recommendation for each user from a set of predictions.
 
@@ -261,7 +262,7 @@ def contenido(usuario): #mail
 
 def recomendacion (usuario):
 #invocar la función pesos
-  pesos = pesos()
+  #pesos = pesos()
   wColaborativo = pesos[0]
   wContenido = pesos[1]
 
@@ -317,7 +318,7 @@ def recomendacion (usuario):
           cursor.close()
           connection.close()
           print("PostgreSQL connection is closed")
------------------------------FIN de la Insercion------------------------------------
+#-----------------------------FIN de la Insercion------------------------------------
 
 # Regresar la lista de modelos recomendada
   return modelos
