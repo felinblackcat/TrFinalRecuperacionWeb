@@ -1,0 +1,1 @@
+Como es sabido python maneja rutas de contexto, por ende, el proyecto puede sacar problemas de importación de recursos dependiendo del contexto en el que python ejecute las aplicaciones.
