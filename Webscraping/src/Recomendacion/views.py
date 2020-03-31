@@ -20,7 +20,7 @@ from matplotlib.figure import Figure
 from matplotlib.dates import DateFormatter
 import psycopg2
 from itertools import chain
-
+from Recomendacion.Recomendacion import recomendacion
 
 @csrf_exempt
 def GuardarCalificacion(request):
@@ -121,8 +121,17 @@ def MostrarTelevisores(request):
                     'ListaTelevisores':Query,                    
                     }
     
-    
     return render(request,'MostrarTelevisores.html',context)
+
+@csrf_exempt
+def VerRecomendaciones(request):
+    usuario_actual = request.user.username
+    query = recomendacion(usuario_actual)
+    print(query)
+    context={
+            'recomendaciones':query
+            }
+    return render(request,'VerRecomendaciones.html',context)
 
 @csrf_exempt
 def ModalTelevisores(request):

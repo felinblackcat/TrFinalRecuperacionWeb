@@ -13,12 +13,29 @@
 {% block tools %}
 
 
+<nav class="navbar bg-dark navbar-dark " >
+      <a class="navbar-brand" href="{% url 'MostrarTelevisores' %}">Ver Televisores</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'VerRecomendaciones' %}">Ver Recomendaciones<span class="sr-only">(current)</span></a>
+          </li>         
+          <li class="nav-item my-2 my-lg-0">
+              <a class="nav-link" href="{% url 'SistemaRecomendacion' %}">Ver Perfil de Usuario</a>
+          </li>
+        </ul>
+        <ul>
 
-<ul>
-<li><a href="{% url 'MostrarTelevisores' %}">Ver Televisores</a></li>
-<li><a href="">listar usuarios</a></li>
-<li><a href="">Gestion sistema recomendacion</a></li>
-</ul>
+
+      </div>
+    </nav>
+
+
+
 
 
 {% endblock %}

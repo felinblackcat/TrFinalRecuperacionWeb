@@ -24,7 +24,7 @@ from collections import defaultdict
 #***********************************************************************************
 #******************************* Funciones *****************************************
 #***********************************************************************************
-*-----------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------
 def get_top_n(predictions, n=5):
     '''Return the top-N recommendation for each user from a set of predictions.
 
@@ -61,7 +61,7 @@ def conexion_bd(tabla):
         # Extracción de datos de la Base de datos
         sql_command = "SELECT * FROM {}.{};".format(str("public"), str(tabla))
         df_tabla = pd.read_sql(sql_command, db_connection)
-    
+        print(df_tabla)
     except (Exception, psycopg2.Error) as error :
             print("Failed PostgreSQL connection", error)
 
@@ -80,12 +80,12 @@ def pesos():
  #Verificar que el dataframe que almacena la consulta no este vacio
   if not df_precision.empty:
  #Eliminar las filas de recomendaciones no calificadas por el usuario
-    df_precision = df_precision.dropna(subset['CALIFICACION'])  
+    df_precision = df_precision.dropna(subset=['calificacion'])  
  #calcular una simple presicion de los sistemas individiales basados en las calificaciones positivas o negativas   
-    colabora = df_precision[df_precision['SISTEMA_RECOMENDACION'] == "Colaborativo"]
-    conten = df_precision[df_precision['SISTEMA_RECOMENDACION'] == "Contenido"]
-    lcola = colabora['CALIFICACION'].tolist()
-    lconte = conten['CALIFICACION'].tolist()
+    colabora = df_precision[df_precision['sistema_recomendacion'] == "Colaborativo"]
+    conten = df_precision[df_precision['sistema_recomendacion'] == "Contenido"]
+    lcola = colabora['calificacion'].tolist()
+    lconte = conten['calificacion'].tolist()
 
     c,d = 0,0
     for x in lcola:
@@ -261,9 +261,9 @@ def contenido(usuario): #mail
 
 def recomendacion (usuario):
 #invocar la función pesos
-  pesos = pesos()
-  wColaborativo = pesos[0]
-  wContenido = pesos[1]
+  pesoso = pesos()
+  wColaborativo = pesoso[0]
+  wContenido = pesoso[1]
 
 #*****obtener las recomendaciones de los sistemas de recomendacion independientes***
 # Obtener la lista que arroja el sistema colaborativo y agregarles la etiqueda del RS
@@ -272,7 +272,7 @@ def recomendacion (usuario):
   #Multiplicar las recomendaciones por el peso del sistema colaborativo  
   topColaborativo = [[x[0],x[1]*wColaborativo, x[2]] for x in topColaborativo]
 #Obtener la lista que arroja el sistema basado en contenido
-  topContenido = contenido()
+  topContenido = contenido(usuario)
 #cambiar la escala numerica de la valoracion y agregar la etiquera del RS
   topContenido = [[x[0], cambio(x[1],0.0,1.0,1.0,5.0), "Contenido"] for x in topContenido]
 # multiplicarl la calificación por el peso del RS
@@ -317,7 +317,7 @@ def recomendacion (usuario):
           cursor.close()
           connection.close()
           print("PostgreSQL connection is closed")
------------------------------FIN de la Insercion------------------------------------
+#-----------------------------FIN de la Insercion------------------------------------
 
 # Regresar la lista de modelos recomendada
   return modelos
