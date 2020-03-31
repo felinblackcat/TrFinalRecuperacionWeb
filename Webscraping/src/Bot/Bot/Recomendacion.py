@@ -24,7 +24,7 @@ from collections import defaultdict
 #***********************************************************************************
 #******************************* Funciones *****************************************
 #***********************************************************************************
-*-----------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------
 def get_top_n(predictions, n=5):
     '''Return the top-N recommendation for each user from a set of predictions.
 
@@ -317,7 +317,7 @@ def recomendacion (usuario):
           cursor.close()
           connection.close()
           print("PostgreSQL connection is closed")
------------------------------FIN de la Insercion------------------------------------
+#-----------------------------FIN de la Insercion------------------------------------
 
 # Regresar la lista de modelos recomendada
   return modelos
