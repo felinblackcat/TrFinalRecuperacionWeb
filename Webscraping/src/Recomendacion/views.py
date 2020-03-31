@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from Recomendacion.models import Televisor,Calificacion,Usuario
+from Recomendacion.models import Televisor,Calificacion,Usuario,Precision
 from django.db.utils import IntegrityError
 from django.contrib import messages
 from django.contrib.auth import authenticate
@@ -18,24 +18,33 @@ from django.http import HttpResponse
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from matplotlib.dates import DateFormatter
-
+import psycopg2
 from itertools import chain
 
 
 @csrf_exempt
 def GuardarCalificacion(request):
      if(request.method=="POST"):
-         usuario_actual = request.user
+         usuario_actual = request.user.username
+         
+         db_connection= psycopg2.connect(user = "postgres",password = "Felingato1992",host = "127.0.0.1",port = "5432",database = "tvrec")
+         cursor = db_connection.cursor()
+         
          try:
+            
+            sql = "INSERT INTO calificacion(correo,modelo,calificacionusuario) values(%s,%s,%s)"
+            values = (usuario_actual,request.POST.get('modelo'),request.POST.get('input-1'))
+            cursor.execute(sql,values)
+            db_connection.commit()
+            return redirect('../userPanel/MostrarTelevisores')
+         except Exception as error:
+            db_connection.rollback()
+            sql = "UPDATE calificacion SET calificacionusuario = %s where correo = %s and modelo = %s"
+            cursor.execute(sql,(request.POST.get('input-1'),usuario_actual,request.POST.get('modelo')))
+            db_connection.commit()
+            return redirect('../userPanel/MostrarTelevisores')
+         
              
-             instancia = Calificacion.objects.get(correo=usuario_actual,modelo=request.POST.get('modelo'))
-             instancia.calificacionusuario = request.POST.get('input-1')
-             instancia.save()
-             return redirect('../userPanel/MostrarTelevisores')
-         except Calificacion.DoesNotExist:
-             instancia = Calificacion(correo=usuario_actual,modelo=request.POST.get('modelo'),calificacion = request.POST.get('input-1'))
-             instancia.save()
-             return redirect('../userPanel/MostrarTelevisores')
 @csrf_exempt
 def MostarCalificaciones(request):
         Query=Calificacion.objects.all().order_by('correo').values()
@@ -106,12 +115,8 @@ def MostrarTelevisores(request):
     
     usuario_actual = request.user.username
     
-    #Televisores = Televisor.objects.all().values()
-    #calificaciones_usuario = Calificacion.objects.filter(correo=usuario_actual)
-    #result_list = list(chain(Televisores,calificaciones_usuario))
-    #Query = Televisor.objects.filter(calificacion__correo__isnull=True ).values() | Televisor.objects.filter(calificacion__correo='correo' ).values()
-    Query = Televisor.objects.filter(calificacion__correo__isnull=True ).values('calificacion__calificacionusuario','modelo','observaciones','marca','precio','tamanopantalla','resolucion','tipodisplay','urlwalmart','urlbb')| Televisor.objects.all().filter(calificacion__correo=usuario_actual ).values('calificacion__calificacionusuario','modelo','observaciones','marca','precio','tamanopantalla','resolucion','tipodisplay','urlwalmart','urlbb')
-
+    Query = Televisor.objects.filter(calificacion__correo__isnull=True ).order_by('modelo').values('calificacion__calificacionusuario','modelo','observaciones','marca','precio','tamanopantalla','resolucion','tipodisplay','urlwalmart','urlbb')| Televisor.objects.all().filter(calificacion__correo=usuario_actual ).order_by('modelo').values('calificacion__calificacionusuario','modelo','observaciones','marca','precio','tamanopantalla','resolucion','tipodisplay','urlwalmart','urlbb')
+    print(Query.query)
     context = {
                     'ListaTelevisores':Query,                    
                     }
