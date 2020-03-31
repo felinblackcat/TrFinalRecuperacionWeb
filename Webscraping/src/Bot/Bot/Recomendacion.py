@@ -80,7 +80,7 @@ def pesos():
  #Verificar que el dataframe que almacena la consulta no este vacio
   if not df_precision.empty:
  #Eliminar las filas de recomendaciones no calificadas por el usuario
-    df_precision = df_precision.dropna(subset['CALIFICACION'])  
+    df_precision = df_precision.dropna(subset=['CALIFICACION'])  
  #calcular una simple presicion de los sistemas individiales basados en las calificaciones positivas o negativas   
     colabora = df_precision[df_precision['SISTEMA_RECOMENDACION'] == "Colaborativo"]
     conten = df_precision[df_precision['SISTEMA_RECOMENDACION'] == "Contenido"]
