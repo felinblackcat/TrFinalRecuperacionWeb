@@ -130,13 +130,15 @@ class DjangoSession(models.Model):
 
 
 class Precision(models.Model):
-    modelo = models.TextField(blank=True, null=True)
+    usuario = models.TextField(primary_key=True)
+    modelo = models.TextField()
     calificacion = models.TextField(blank=True, null=True)
     sistema_recomendacion = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'precision'
+        unique_together = (('usuario', 'modelo'),)
 
 
 class Televisor(models.Model):

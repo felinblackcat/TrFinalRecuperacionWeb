@@ -20,7 +20,7 @@ from matplotlib.figure import Figure
 from matplotlib.dates import DateFormatter
 import psycopg2
 from itertools import chain
-from Recomendacion.Recomendacion import recomendacion
+from Recomendacion.Recomendacion import recomendacion,perfil_usuario
 
 @csrf_exempt
 def GuardarCalificacion(request):
@@ -43,6 +43,49 @@ def GuardarCalificacion(request):
             cursor.execute(sql,(request.POST.get('input-1'),usuario_actual,request.POST.get('modelo')))
             db_connection.commit()
             return redirect('../userPanel/MostrarTelevisores')
+        
+def CalificarRecomendacion(request):
+    if(request.method=="POST"):
+        usuario_actual = request.user.username
+        db_connection= psycopg2.connect(user = "postgres",password = "Felingato1992",host = "127.0.0.1",port = "5432",database = "tvrec")
+        cursor = db_connection.cursor()
+        if(request.POST.get('botoni') == "me gusta"):
+                
+         
+            try:
+                
+                
+                sql = "UPDATE Precision SET calificacion = %s where usuario = %s and modelo = %s"
+                values = ('True',usuario_actual,request.POST.get('datosboton'))
+                
+                print(values)
+                
+                cursor.execute(sql,values)
+                print("sigue")
+                db_connection.commit()
+                print("Hago commit")
+                return redirect('../userPanel/VerRecomendaciones')
+            except Exception as error:
+                print("Excepcion")
+                print(error)
+                db_connection.rollback()
+                return redirect('../userPanel/VerRecomendaciones')
+        
+        else:
+            
+            try:
+                
+                sql = "UPDATE Precision SET calificacion = %s where usuario = %s and modelo = %s"
+                values = ("False",usuario_actual,request.POST.get('datosboton'))
+                cursor.execute(sql,values)
+                db_connection.commit()
+                return redirect('../userPanel/VerRecomendaciones')
+            except Exception as error:
+                db_connection.rollback()
+                return redirect('../userPanel/VerRecomendaciones')
+                
+    
+
          
              
 @csrf_exempt
@@ -127,9 +170,14 @@ def MostrarTelevisores(request):
 def VerRecomendaciones(request):
     usuario_actual = request.user.username
     query = recomendacion(usuario_actual)
-    print(query)
+    dicc = {}
+    for i in query:
+        mod = Precision.objects.all().filter(modelo=i).first()
+        
+        mod = mod.calificacion
+        dicc[i] = mod
     context={
-            'recomendaciones':query
+            'recomendaciones':dicc
             }
     return render(request,'VerRecomendaciones.html',context)
 
@@ -302,17 +350,22 @@ def Loguearse(request):
         else:
             
             return redirect('login')
-        
-        
-        
-         
-        
-        
-
-    
-    
-    
-    
     
     
     return render(request,'registro.html')
+
+
+
+def VerPerfilUsuario(request):
+    usuario_actual = request.user.username
+    perfilusuario = perfil_usuario(usuario_actual )
+    keys = list(perfilusuario.keys())
+    values=list(perfilusuario.values())
+    #for key, value in perfilusuario:
+        #perfilfinal.append([key,value])
+    #context={'datos':{'claves':keys,'valores':values},
+     #        }
+    context = {'datos':perfilusuario}
+    
+    
+    return render(request,'VerPerfilUsuario.html',context)

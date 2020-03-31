@@ -62,7 +62,6 @@ def conexion_bd(tabla):
         # Extracción de datos de la Base de datos
         sql_command = "SELECT * FROM {}.{};".format(str("public"), str(tabla))
         df_tabla = pd.read_sql(sql_command, db_connection)
-        print(df_tabla)
     except (Exception, psycopg2.Error) as error :
             print("Failed PostgreSQL connection", error)
 
@@ -334,16 +333,18 @@ def recomendacion (usuario):
                                     database="tvrec")
     cursor = connection.cursor()
 
-    postgres_insert_query = """ INSERT INTO Precision ( MODELO , SISTEMA_RECOMENDACION ) VALUES (%s,%s)"""
+    postgres_insert_query = """ INSERT INTO Precision ( MODELO , SISTEMA_RECOMENDACION,USUARIO) VALUES (%s,%s,%s)"""
+
 
     for valores in listaHibrido:
-      insert_tuple = (valores[0], valores[2])
+      insert_tuple = (valores[0], valores[2],usuario)
       cursor.execute(postgres_insert_query, insert_tuple)
 
       connection.commit()
       count = cursor.rowcount
 
   except (Exception, psycopg2.Error) as error :
+      connection.rollback()
       if(connection):
           print("Failed to insert record into mobile table", error)
 

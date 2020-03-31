@@ -5,17 +5,50 @@
 <table class="table">
   <thead>
     <tr>
-      <th scope="col">Modelo</th>
-      
+      <th >Modelo</th>
+      <th> Calificar recomendacion </th>
     </tr>
   </thead>
   <tbody>
-  
-      {%for modelo in recomendaciones%}
+ <!-- <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> --> 
+<!--<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>-->
+<!--<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>-->
+      {%for modelo,cal in recomendaciones.items%}
+    <form action="{% url 'CalificarRecomendacion' %}" method="post">{% csrf_token %}
     <tr>
       <td>{{modelo}}</td>
       
+      {% if cal == None %}
+      
+      <form action="{% url 'CalificarRecomendacion' %}" method="post">{% csrf_token %}
+      <input type="hidden" name="datosboton" value="{{modelo}}">
+      <input type="hidden" name="botoni" value="me gusta">
+      <td> <button type="submit" name = "boton" class="btn btn-info btn-circle"><i class="glyphicon glyphicon-ok" ></i>Me gusta</button>
+      </form>
+      <form action="{% url 'CalificarRecomendacion' %}" method="post">{% csrf_token %}
+      <input type="hidden" name="datosboton" value="{{modelo}}">
+      <input type="hidden" name="botoni" value="no me gusta">
+<button type="submit" name = "boton" class="btn btn-warning btn-circle"><i class="glyphicon glyphicon-remove" ></i>No me gusta</button></td>
+      </form>
+      
+      {% else %}
+      
+      
+      <form action="{% url 'CalificarRecomendacion' %}" method="post">{% csrf_token %}
+      <input type="hidden" name="datosboton" value="{{modelo}}">
+      <input type="hidden" name="botoni" value="me gusta">
+      <td> <button type="submit" name = "boton" class="btn btn-info btn-circle" disabled><i class="glyphicon glyphicon-ok" ></i>Me gusta</button>
+      </form>
+      <form action="{% url 'CalificarRecomendacion' %}" method="post">{% csrf_token %}
+      <input type="hidden" name="datosboton" value="{{modelo}}">
+      <input type="hidden" name="botoni" value="no me gusta">
+      <button type="submit" name = "boton" class="btn btn-warning btn-circle" disabled><i class="glyphicon glyphicon-remove"></i>No me gusta</button></td>
+      </form>
+      
+      {% endif %}
     </tr>
+    
+    
         {%endfor%}
    
   </tbody>
