@@ -21,6 +21,7 @@ from matplotlib.dates import DateFormatter
 import psycopg2
 from itertools import chain
 from Recomendacion.Recomendacion import recomendacion,perfil_usuario
+from django.db.models import Q
 
 @csrf_exempt
 def GuardarCalificacion(request):
@@ -110,36 +111,60 @@ def MostrarRecomendaciones(request):
 def MostrarPresicion(request):
     
     
-        try:
-            TotalSistema=Precision.objects.all().count()
-            AcertividadTotal = Precision.objects.all().filter(calificacion="True").count()           
-            
-            TotalColaborativo = Precision.objects.all().filter(modelo='Colaborativo').count()
-            AcertividadColaborativo = Precision.objects.all().filter(modelo='Colaborativo',calificacion="True").count()
-            
-            TotalContenido = Precision.objects.all().filter(modelo='Contenido').annotate(total=Count('modelo')).count()
-            AcertividadContenido = Precision.objects.all().filter(modelo='Contenido',calificacion="True").count()
-            
-            PresionTotal = AcertividadTotal/TotalSistema
-            PresisionColaborativo = TotalColaborativo/AcertividadColaborativo
-            PresisionContenido = TotalContenido/AcertividadContenido
-            
-            
-            
-            
-        except ZeroDivisionError:
-            PresionTotal = 0
-            PresisionColaborativo = 0
-            PresisionContenido = 0
         
-        
-        print(PresionTotal,PresisionColaborativo,PresisionContenido)
-        context = {
-                        'Presicion':{"Total":PresionTotal,"Colaborativo":PresisionColaborativo,"Contenido":PresisionContenido},                    
-                        }
-        return render(request,'MostrarPresision.html',context)
+    TotalSistema=Precision.objects.all().filter(~Q(calificacion = None)).count()
+    
+    AcertividadTotal = Precision.objects.all().filter(calificacion ="True").count()           
+    
+    TotalColaborativo = Precision.objects.all().filter(sistema_recomendacion='Colaborativo').filter(~Q(calificacion = None)).count()
+
+    AcertividadColaborativo = Precision.objects.all().filter(sistema_recomendacion='Colaborativo',calificacion="True").count()
+    
+    
+    TotalContenido = Precision.objects.all().filter(sistema_recomendacion='Contenido').filter(~Q(calificacion = None)).count()
+    AcertividadContenido = Precision.objects.all().filter(sistema_recomendacion='Contenido',calificacion="True").count()
+    
+    
+    try:
+        PresionTotal = AcertividadTotal/TotalSistema
+    except:
+        PresionTotal = 0
+    try:
+        PresisionColaborativo = AcertividadColaborativo/TotalColaborativo
+    except:
+         PresisionColaborativo = 0
+    try:
+         PresisionContenido = AcertividadContenido/TotalContenido
+    except:
+         PresisionContenido = 0        
+            
+            
+           
+            
+    context = {
+                    'Presicion':{"Total":str(round(PresionTotal*100,2))+'%',"Colaborativo":str(round(PresisionColaborativo*100,2))+'%',"Contenido":str(round(PresisionContenido*100,2))+'%'},                    
+                    }
+    return render(request,'MostrarPresision.html',context)
 
 
+def MostrarPrecisionUsuario():
+    
+    
+        
+    TotalSistema=Precision.objects.all().filter(~Q(calificacion = None)).count()
+    
+    AcertividadTotal = Precision.objects.all().filter(calificacion ="True").count()           
+    
+
+    
+    try:
+        PresionTotal = AcertividadTotal/TotalSistema
+    except:
+        PresionTotal = 0
+           
+            
+
+    return str(round(PresionTotal*100,2))+"%"
 
 ###################################################################################################################################
 @csrf_exempt
@@ -189,9 +214,9 @@ def VerRecomendaciones(request):
     query = recomendacion(usuario_actual)
     dicc = {}
     for i in query:
-        mod = Precision.objects.all().filter(modelo=i).first()
-        
-        mod = mod.calificacion
+        mod = Precision.objects.all().filter(modelo=i,usuario=usuario_actual).first()
+        if(mod != None):
+            mod = mod.calificacion
         dicc[i] = mod
     context={
             'recomendaciones':dicc
@@ -376,13 +401,10 @@ def Loguearse(request):
 def VerPerfilUsuario(request):
     usuario_actual = request.user.username
     perfilusuario = perfil_usuario(usuario_actual )
-    keys = list(perfilusuario.keys())
-    values=list(perfilusuario.values())
-    #for key, value in perfilusuario:
-        #perfilfinal.append([key,value])
-    #context={'datos':{'claves':keys,'valores':values},
-     #        }
-    context = {'datos':perfilusuario}
     
+    precision =MostrarPrecisionUsuario()
+    perfilusuario['precision'] = precision
+    context = {'datos':perfilusuario,'precision':precision}
     
+    print(perfilusuario)
     return render(request,'VerPerfilUsuario.html',context)
