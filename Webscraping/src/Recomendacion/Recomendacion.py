@@ -9,6 +9,7 @@ from surprise import Dataset
 from surprise.model_selection import cross_validate
 from surprise import Reader
 import numpy as np
+
 import pandas as pd
 import pandas.io.sql as psql
 import psycopg2
@@ -75,9 +76,8 @@ def conexion_bd(tabla):
 
 #--------Funcion para calcular y modificar los pesos de los sistemas basados en la calificacion de los usuarios----------
 def pesos():
-  #consultar la tabla precision para computar los aciertos de las recomendaciones
+
   df_precision = conexion_bd("Precision")
- #Verificar que el dataframe que almacena la consulta no este vacio
   if not df_precision.empty:
  #Eliminar las filas de recomendaciones no calificadas por el usuario
     df_precision = df_precision.dropna(subset=['calificacion'])  
@@ -108,9 +108,9 @@ def pesos():
     resultado = [wcol, wcont]
  # en caso de estar vacio se asignan pesos de 1
   else:
-    resultado = [1,1]
+     resultado = [1,1]
   return resultado
-#-------------------------------------------------------------------------------------------------------------------------
+ #-------------------------------------------------------------------------------------------------------------------------
 #-------Funcion Para el cambio de escala de los criterios de medicion de los RS y que tengan el mismo rango de valores----
 def cambio( x, oldMin, oldMax, newMin, newMax ):
   aux = (x-oldMin)*(newMax-newMin)/(oldMax-oldMin)
@@ -250,6 +250,42 @@ def contenido(usuario): #mail
     #drop columns with zeroes
     perfil_usuario = perfil_usuario.loc[:, (perfil_usuario != 0.0).any(axis=0)]
     return recomendaciones
+    
+def perfil_usuario(usuario):
+    #Base data and prep
+    df_calificacion = conexion_bd("calificacion")
+    df_calificacion = df_calificacion.loc[df_calificacion['correo'] == usuario]
+    df_televisor = conexion_bd("televisor")
+    #dropping extra columns and extracting relevant data
+    inventario = df_televisor[['modelo', 'activo']].copy()
+    df_televisor = df_televisor.drop(columns=['observaciones', 'urlwalmart', 'urlbb','calificacionwalmart','activo','datos_otra_tabla'])
+    #one-hot encoding
+    df_televisor = pd.get_dummies(df_televisor,columns = ['marca','tamanopantalla','resolucion','tipodisplay'])
+    #dropping extra rows (tvs without this user's ratings)
+    df_televisor_usuario = df_televisor[df_televisor.modelo.isin(list(df_calificacion['modelo'].values))]
+    #merge the ratings (make sure the model and the ratings correspond to the rows)
+    datos = pd.merge(left=df_televisor_usuario, right=df_calificacion[['modelo','calificacionusuario']], on='modelo')
+    
+    #User profile computation
+    df_calificacion = datos[['modelo', 'calificacionusuario']].copy() #keep sorted values intact
+    datos = datos.drop(columns=['modelo', 'calificacionusuario'])
+    #multiply data by the ratings
+    datos = datos.fillna(0.0).mul(list(df_calificacion['calificacionusuario'].values), axis='rows')
+    #fill raw user profile with the aggregated data
+    perfil_basico = pd.DataFrame([datos.sum()], columns = datos.columns) #[] to let pandas know they're rows
+    #fill final profile with the normalized data
+    perfil_usuario = perfil_basico.copy()
+    #normalize price of a tv
+    perfil_usuario = perfil_usuario.apply(lambda x: x / sum(list(df_calificacion['calificacionusuario'].values)) if x.name == 'precio' else x, axis=0) 
+    datos = datos.div(list(df_calificacion['calificacionusuario'].values), axis='rows')
+    perfil_usuario = perfil_usuario.apply(lambda x: (x-datos['precio'].min()) / (datos['precio'].max()-datos['precio'].min()) if x.name == 'precio' else x, axis=0)
+    #normalize the dummy columns
+    columnas_dummy = perfil_basico.filter(regex='marca_(.*)') #select all dummy columns starting with marca_
+    suma_dummy = columnas_dummy.sum(axis = 1)  #the sum of dummy values is the same for each dummy grouping
+    perfil_usuario = perfil_usuario.apply(lambda x: x / suma_dummy if x.name != 'precio' else x, axis=0)
+    #drop columns with zeroes
+    perfil_usuario = perfil_usuario.loc[:, (perfil_usuario != 0.0).any(axis=0)]
+    return perfil_usuario.to_dict('records')[0]
 #********************************************************************************
 #************************* FIN CONTENIDO *************************************
 #********************************************************************************
