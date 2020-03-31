@@ -21,8 +21,10 @@ from surprise import KNNWithMeans
 from surprise.model_selection import GridSearchCV
 from surprise import SVD
 from collections import defaultdict
-
-#Funciones
+#***********************************************************************************
+#******************************* Funciones *****************************************
+#***********************************************************************************
+*-----------------------------------------------------------------------------------
 def get_top_n(predictions, n=5):
     '''Return the top-N recommendation for each user from a set of predictions.
 
@@ -49,9 +51,9 @@ def get_top_n(predictions, n=5):
 
     return top_n
 
-
+#-------------------------------------Extraccion de datos base de datos---------------------------
 def conexion_bd(tabla):
-    #---------------------------------------------------------------------------Extraccion de datos base de datos---------------------------
+    
     #Conexión a la Base de datos
     try:
         db_connection= psycopg2.connect(user = "postgres",password = "Felingato1992",host = "127.0.0.1",port = "5432",database = "tvrec")
@@ -68,9 +70,59 @@ def conexion_bd(tabla):
         print("PostgreSQL connection is closed")
             
     return df_tabla
-        
+#------------------------------------------------------------------------------------------------------------------------
+
+
+#--------Funcion para calcular y modificar los pesos de los sistemas basados en la calificacion de los usuarios----------
+def pesos():
+  #consultar la tabla precision para computar los aciertos de las recomendaciones
+  df_precision = conexion_bd("Precision")
+ #Verificar que el dataframe que almacena la consulta no este vacio
+  if not df_precision.empty:
+ #Eliminar las filas de recomendaciones no calificadas por el usuario
+    df_precision = df_precision.dropna(subset['CALIFICACION'])  
+ #calcular una simple presicion de los sistemas individiales basados en las calificaciones positivas o negativas   
+    colabora = df_precision[df_precision['SISTEMA_RECOMENDACION'] == "Colaborativo"]
+    conten = df_precision[df_precision['SISTEMA_RECOMENDACION'] == "Contenido"]
+    lcola = colabora['CALIFICACION'].tolist()
+    lconte = conten['CALIFICACION'].tolist()
+
+    c,d = 0,0
+    for x in lcola:
+      if x == "True":
+        c = c+1
+    for y in lconte:
+      if y == "True":
+        d = d+1
+
+    if len(lcola) > 0:  
+      wcol = c/len(lcola)
+    else:
+      wcol = 1
+
+    if len(lconte) > 0:
+      wcont= d/len(lconte)
+    else:
+      wcont = 1
+ # asignar los pesos para cada sistema que será la presicion calculada   
+    resultado = [wcol, wcont]
+ # en caso de estar vacio se asignan pesos de 1
+  else:
+    resultado = [1,1]
+  return resultado
+#-------------------------------------------------------------------------------------------------------------------------
+#-------Funcion Para el cambio de escala de los criterios de medicion de los RS y que tengan el mismo rango de valores----
+def cambio( x, oldMin, oldMax, newMin, newMax ):
+  aux = (x-oldMin)*(newMax-newMin)/(oldMax-oldMin)
+  result = aux + newMin
+  return result
+#-----------------------------------------------------------------------------------------------------------------
+
+#---------------------------------------------------------------------------------------------------------------
+#************************************ FIN FUNCIONES ************************************************************
+
 #****************************************************************************************************************
-#********** SISTEMA DE RECOMENDACION COLABORATIVO (USUARIO - USUARIO)********************************************
+#*************** SISTEMA DE RECOMENDACION COLABORATIVO (USUARIO - USUARIO)***************************************
 #****************************************************************************************************************
 def colaborativo(usuario):
 
@@ -188,13 +240,15 @@ def contenido(usuario): #mail
         recomendaciones.append([modelo, dist_fila])
     
     #Filtering out unreachable tvs
-    recomendaciones = pd.DataFrame(recomendaciones, columns = ['modelo', 'distancia'])
+    recomendaciones = pd.DataFrame(recomendaciones, columns = ['modelo', 'similaridad'])
     recomendaciones = pd.merge(left=recomendaciones, right=inventario, on='modelo')
     recomendaciones = recomendaciones[recomendaciones.activo]
     
-    #Output
-    recomendaciones = recomendaciones.sort_values(by='distancia', ascending=True)
-    recomendaciones = recomendaciones.values.tolist()
+    #Results
+    recomendaciones = recomendaciones.sort_values(by='similaridad', ascending=False)
+    recomendaciones = recomendaciones.head(10).values.tolist()
+    #drop columns with zeroes
+    perfil_usuario = perfil_usuario.loc[:, (perfil_usuario != 0.0).any(axis=0)]
     return recomendaciones
 #********************************************************************************
 #************************* FIN CONTENIDO *************************************
@@ -202,50 +256,8 @@ def contenido(usuario): #mail
 
 
 #**********************************************************************************
-#************************** SISTEMA HIBRIDI ***************************************
+#************************** SISTEMA HIBRIDO ***************************************
 #**********************************************************************************
-
-#Funcion para calcular y modificar lso pesos d los sistemas basado en su precision
-def pesos():
-  #consultar la tabla precision para computar los aciertos de las recomendaciones
-  df_precision = conexion_bd("precision")
- #Verificar que el dataframe que almacena la consulta no este vacio
-  if not df_precision.empty:
-      
-    colabora = df_precision[df_precision['SISTEMA_RECOMENDACION'] == "Colaborativo"]
-    conten = df_precision[df_precision['SISTEMA_RECOMENDACION'] == "Contenido"]
-    lcola = colabora['CALIFICACION'].tolist()
-    lconte = conten['CALIFICACION'].tolist()
-
-    c,d = 0,0
-    for x in lcola:
-      if x == "True":
-        c = c+1
-    for y in lconte:
-      if y == "True":
-        d = d+1
-
-    if len(lcola) > 0:  
-      wcol = c/len(lcola)
-    else:
-      wcol = 1
-
-    if len(lconte) > 0:
-      wcont= d/len(lconte)
-    else:
-      wcont = 1
-    
-    resultado = [wcol, wcont]
- # en caso de estar vacio se asignan pesos de 1
-  else:
-    resultado = [1,1]
-  return resultado
-#Para el cambio de escala de los criterios de medicion de los RS
-def cambio( x, oldMin, oldMax, newMin, newMax ):
-  aux = (x-oldMin)*(newMax-newMin)/(oldMax-oldMin)
-  result = aux + newMin
-  return result
-#----------------------------------------------------------------
 
 def recomendacion (usuario):
 #invocar la función pesos
@@ -254,25 +266,22 @@ def recomendacion (usuario):
   wContenido = pesos[1]
 
 #*****obtener las recomendaciones de los sistemas de recomendacion independientes***
-# Obtener la lista que arroja el sistema colaborativo
+# Obtener la lista que arroja el sistema colaborativo y agregarles la etiqueda del RS
   topColaborativo = colaborativo(usuario)
   topColaborativo = [[x[0], x[1], "Colaborativo"] for x in topColaborativo]
-  #listaColab = [[modelo, calificacion, "colaborativo"] for modelo, calificacion in topColaborativo
-  
+  #Multiplicar las recomendaciones por el peso del sistema colaborativo  
   topColaborativo = [[x[0],x[1]*wColaborativo, x[2]] for x in topColaborativo]
-
+#Obtener la lista que arroja el sistema basado en contenido
   topContenido = contenido()
 #cambiar la escala numerica de la valoracion y agregar la etiquera del RS
-  topContenido = [[x[0], cambio(x[1],-1.0,1.0,1.0,5.0), "Contenido"] for x in topColaborativo]
-  topContenido.sort(key= lambda cal : cal[1], reverse=True)
-  
-#  multiplicarl la calificación por el peso del RS
+  topContenido = [[x[0], cambio(x[1],0.0,1.0,1.0,5.0), "Contenido"] for x in topContenido]
+# multiplicarl la calificación por el peso del RS
   topContenido = [[x[0],x[1]*wContenido, x[2]] for x in topContenido]
 
-#Fusionarlas y ordenarlas por calificación
+#Fusionar las recomendaciones y ordenarlas por calificación en orden descendente
   listaB = topColaborativo + topContenido
   listaB.sort(key=lambda cal : cal[1], reverse=True)
-#Eliminar modelos repetidos, conservando el de mayor calificación
+#Eliminar modelos recomendados repetidos, conservando el de mayor calificación
   listaHibrido = []
   modelos =[]
   for i in listaB:
@@ -280,7 +289,7 @@ def recomendacion (usuario):
       listaHibrido.append(i)
       modelos.append(i[0])
 
-  #*************** Insertar las recomendaciones en la tabla Precision*************
+  #------------------- Insertar las recomendaciones en la tabla Precision ------------------
   try:
     connection = psycopg2.connect(user="postgres",
                                     password="Felingato1992",
@@ -303,16 +312,17 @@ def recomendacion (usuario):
           print("Failed to insert record into mobile table", error)
 
   finally:
-      #closing database connection.
+      #cerrar la conexion a la base de datos.
       if(connection):
           cursor.close()
           connection.close()
           print("PostgreSQL connection is closed")
-  #*******************************************************************
-  # Regresar la lista de modelos recomendada
+-----------------------------FIN de la Insercion------------------------------------
+
+# Regresar la lista de modelos recomendada
   return modelos
-#***********************************************************************************
-#************************ FIN HIBRIDI **********************************************
+#************************************************************************************
+#************************ FIN HIBRIDI ***********************************************
 #************************************************************************************
 
 """
