@@ -80,7 +80,7 @@ def pesos():
   df_precision = conexion_bd("Precision")
   if not df_precision.empty:
      
-     df_precision = df_precision.dropna(subset=['CALIFICACION'])  
+     df_precision = df_precision.dropna()  
      colabora = df_precision[df_precision['SISTEMA_RECOMENDACION'] == "Colaborativo"]
      conten = df_precision[df_precision['SISTEMA_RECOMENDACION'] == "Contenido"]
      lcola = colabora['CALIFICACION'].tolist()
