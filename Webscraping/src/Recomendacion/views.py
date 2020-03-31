@@ -108,17 +108,34 @@ def MostrarRecomendaciones(request):
 
 @csrf_exempt
 def MostrarPresicion(request):
-        TotalSistema=Precision.objects.all().annotate(total=Count('modelo')).values('total')
-        AcertividadTotal = Precision.objects.all().filter(calificacion="True").annotate(total=Count('modelo')).values('total')
+    
+    
+        try:
+            TotalSistema=Precision.objects.all().count()
+            AcertividadTotal = Precision.objects.all().filter(calificacion="True").count()           
+            
+            TotalColaborativo = Precision.objects.all().filter(modelo='Colaborativo').count()
+            AcertividadColaborativo = Precision.objects.all().filter(modelo='Colaborativo',calificacion="True").count()
+            
+            TotalContenido = Precision.objects.all().filter(modelo='Contenido').annotate(total=Count('modelo')).count()
+            AcertividadContenido = Precision.objects.all().filter(modelo='Contenido',calificacion="True").count()
+            
+            PresionTotal = AcertividadTotal/TotalSistema
+            PresisionColaborativo = TotalColaborativo/AcertividadColaborativo
+            PresisionContenido = TotalContenido/AcertividadContenido
+            
+            
+            
+            
+        except ZeroDivisionError:
+            PresionTotal = 0
+            PresisionColaborativo = 0
+            PresisionContenido = 0
         
-        TotalColaborativo = Precision.objects.all().filter(modelo='Colaborativo').annotate(total=Count('modelo')).values('total')
-        AcertividadColaborativo = Precision.objects.all().filter(modelo='Colaborativo',calificacion="True").annotate(total=Count('modelo')).values('total')
         
-        TotalContenido = Precision.objects.all().filter(modelo='Contenido').annotate(total=Count('modelo')).values('total')
-        AcertividadContenido = Precision.objects.all().filter(modelo='Contenido',calificacion="True").annotate(total=Count('modelo')).values('total')
-        print(AcertividadColaborativo.query)
+        print(PresionTotal,PresisionColaborativo,PresisionContenido)
         context = {
-                        'ListaTelevisores':2,                    
+                        'Presicion':{"Total":PresionTotal,"Colaborativo":PresisionColaborativo,"Contenido":PresisionContenido},                    
                         }
         return render(request,'MostrarPresision.html',context)
 
