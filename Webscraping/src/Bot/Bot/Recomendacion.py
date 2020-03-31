@@ -188,13 +188,15 @@ def contenido(usuario): #mail
         recomendaciones.append([modelo, dist_fila])
     
     #Filtering out unreachable tvs
-    recomendaciones = pd.DataFrame(recomendaciones, columns = ['modelo', 'distancia'])
+    recomendaciones = pd.DataFrame(recomendaciones, columns = ['modelo', 'similaridad'])
     recomendaciones = pd.merge(left=recomendaciones, right=inventario, on='modelo')
     recomendaciones = recomendaciones[recomendaciones.activo]
     
-    #Output
-    recomendaciones = recomendaciones.sort_values(by='distancia', ascending=True)
-    recomendaciones = recomendaciones.values.tolist()
+    #Results
+    recomendaciones = recomendaciones.sort_values(by='similaridad', ascending=False)
+    recomendaciones = recomendaciones.head(10).values.tolist()
+    #drop columns with zeroes
+    perfil_usuario = perfil_usuario.loc[:, (perfil_usuario != 0.0).any(axis=0)]
     return recomendaciones
 #********************************************************************************
 #************************* FIN CONTENIDO *************************************
