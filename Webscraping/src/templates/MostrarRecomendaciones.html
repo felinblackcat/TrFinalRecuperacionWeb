@@ -1,0 +1,26 @@
+{% extends "SistemaRecomendacion.html" %}
+
+
+{% block contentRecomendacion %}
+        <center><h1>Recomendaciones</h1></center>
+<table class="table">
+  <thead style="{display: block;}">
+    <tr>
+      <th scope="col">Modelo</th>
+      <th scope="col">Calificacion</th> 
+      <th scope="col">Sistema Recomendacion</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+    {%for recomendacion in ListaRecomendaciones%}
+        <tr>
+         <td>{{recomendacion.modelo}}</td>
+         <td>{{recomendacion.calificacion}}</td>
+         <td>{{recomendacion.sistema_recomendacion}}</td>
+         
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

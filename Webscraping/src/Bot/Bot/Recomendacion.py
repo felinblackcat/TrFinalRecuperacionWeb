@@ -211,6 +211,7 @@ def pesos():
   df_precision = conexion_bd("precision")
  #Verificar que el dataframe que almacena la consulta no este vacio
   if not df_precision.empty:
+      
     colabora = df_precision[df_precision['SISTEMA_RECOMENDACION'] == "Colaborativo"]
     conten = df_precision[df_precision['SISTEMA_RECOMENDACION'] == "Contenido"]
     lcola = colabora['CALIFICACION'].tolist()
@@ -218,12 +219,12 @@ def pesos():
 
     c,d = 0,0
     for x in lcola:
-      if x == True:
+      if x == "True":
         c = c+1
     for y in lconte:
-      if y == True:
+      if y == "True":
         d = d+1
-#calculo de los pesos, total positivos / total calificaciones, por cada RS independiente
+
     if len(lcola) > 0:  
       wcol = c/len(lcola)
     else:
@@ -239,8 +240,13 @@ def pesos():
   else:
     resultado = [1,1]
   return resultado
+#Para el cambio de escala de los criterios de medicion de los RS
+def cambio( x, oldMin, oldMax, newMin, newMax ):
+  aux = (x-oldMin)*(newMax-newMin)/(oldMax-oldMin)
+  result = aux + newMin
+  return result
+#----------------------------------------------------------------
 
-#funcion de recomendacion principal, la que se invoca para mostrar las recomendaciones
 def recomendacion (usuario):
 #invocar la función pesos
   pesos = pesos()
@@ -248,7 +254,7 @@ def recomendacion (usuario):
   wContenido = pesos[1]
 
 #*****obtener las recomendaciones de los sistemas de recomendacion independientes***
-# Obtener la lista que arroja el sistema colaborativo, invocandolo
+# Obtener la lista que arroja el sistema colaborativo
   topColaborativo = colaborativo(usuario)
   topColaborativo = [[x[0], x[1], "Colaborativo"] for x in topColaborativo]
   #listaColab = [[modelo, calificacion, "colaborativo"] for modelo, calificacion in topColaborativo
@@ -256,17 +262,20 @@ def recomendacion (usuario):
   topColaborativo = [[x[0],x[1]*wColaborativo, x[2]] for x in topColaborativo]
 
   topContenido = contenido()
-  listaConte =[] # *****************No sé como lo saca Chaves **********************
-  #  multiplicarl la calificación por el peso del RS
-  listaConte = [[x[0],x[1]*wContenido, x[2]] for x in listaConte]
+#cambiar la escala numerica de la valoracion y agregar la etiquera del RS
+  topContenido = [[x[0], cambio(x[1],-1.0,1.0,1.0,5.0), "Contenido"] for x in topColaborativo]
+  topContenido.sort(key= lambda cal : cal[1], reverse=True)
+  
+#  multiplicarl la calificación por el peso del RS
+  topContenido = [[x[0],x[1]*wContenido, x[2]] for x in topContenido]
 
 #Fusionarlas y ordenarlas por calificación
-  listaB = topColaborativo + listaConte
-  listaB2 = listaB.sort(key= lambda cal : cal[1], reverse=True)
+  listaB = topColaborativo + topContenido
+  listaB.sort(key=lambda cal : cal[1], reverse=True)
 #Eliminar modelos repetidos, conservando el de mayor calificación
   listaHibrido = []
   modelos =[]
-  for i in listaB2:
+  for i in listaB:
     if i[0] not in modelos:
       listaHibrido.append(i)
       modelos.append(i[0])
@@ -302,7 +311,6 @@ def recomendacion (usuario):
   #*******************************************************************
   # Regresar la lista de modelos recomendada
   return modelos
-
 #***********************************************************************************
 #************************ FIN HIBRIDI **********************************************
 #************************************************************************************
