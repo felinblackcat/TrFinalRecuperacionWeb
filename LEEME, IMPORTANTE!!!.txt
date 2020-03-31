@@ -1,1 +1,21 @@
-Como es sabido python maneja rutas de contexto, por ende, el proyecto puede sacar problemas de importación de recursos dependiendo del contexto en el que python ejecute las aplicaciones.
+Como es sabido python maneja rutas de contexto, por ende, el proyecto puede sacar problemas de importación de recursos dependiendo del contexto en el que python ejecute las aplicaciones, por lo tanto dependiendo de estas se utilizan rutas distintas de importación para cada una.
+
+Ejemplo:
+El archivo scraper.py importa las clases spiders.Televisoresbestbuy y spiders.Televisoreswalmart, 
+
+en un contexto:
+
+from spiders.Televisoresbestbuy import TelevisoresbestbuySpider
+from spiders.TelevisoresWalmart import TelevisoreswalmartSpider
+
+y en otro contexto:
+
+from Bot.Bot.spiders.Televisoresbestbuy import TelevisoresbestbuySpider
+from Bot.Bot.spiders.TelevisoresWalmart import TelevisoreswalmartSpider
+
+y en el contexto de django:
+
+from Bot.spiders.Televisoresbestbuy import TelevisoresbestbuySpider
+from Bot.spiders.TelevisoresWalmart import TelevisoreswalmartSpider
+
+Entonces, si hay algún error de importación, es probable que sea por alguno de los anteriores casos.
