@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from Recomendacion.models import Televisor,Calificacion
+from Recomendacion.models import Televisor,Calificacion,Usuario
 from django.db.utils import IntegrityError
 from django.contrib import messages
 from django.contrib.auth import authenticate
@@ -21,6 +21,20 @@ from matplotlib.dates import DateFormatter
 from itertools import chain
 
 
+@csrf_exempt
+def GuardarCalificacion(request):
+     if(request.method=="POST"):
+         usuario_actual = request.user
+         try:
+             
+             instancia = Calificacion.objects.get(correo=usuario_actual,modelo=request.POST.get('modelo'))
+             instancia.calificacionusuario = request.POST.get('input-1')
+             instancia.save()
+             return redirect('../userPanel/MostrarTelevisores')
+         except Calificacion.DoesNotExist:
+             instancia = Calificacion(correo=usuario_actual,modelo=request.POST.get('modelo'),calificacion = request.POST.get('input-1'))
+             instancia.save()
+             return redirect('../userPanel/MostrarTelevisores')
 @csrf_exempt
 def MostarCalificaciones(request):
     
@@ -227,8 +241,10 @@ def RegistrarUsuario(request):
     if(request.method=="POST"):
         #(user,email,pass)
         try:
-            Usuario = User.objects.create_user(request.POST.get('email'),request.POST.get('email'),request.POST.get('password'),first_name=request.POST.get('nombre'))
-            Usuario.save()
+            usuariob = User.objects.create_user(request.POST.get('email'),request.POST.get('email'),request.POST.get('password'),first_name=request.POST.get('nombre'))
+            tabla_usuario = Usuario(correo = request.POST.get('email'),contrasena = request.POST.get('password'),nombre = request.POST.get('nombre'))
+            usuariob.save()
+            tabla_usuario.save()
             #context = {
             #        'mensaje':{'usuario':request.POST.get('email'),'mensaje':'Registrado Correctamente.'},                    
             #        }

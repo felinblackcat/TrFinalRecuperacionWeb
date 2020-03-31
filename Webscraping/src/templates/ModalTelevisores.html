@@ -145,7 +145,7 @@
 </style>
 
 
-
+<form action="{% url 'GuardarCalificacion' %}" method="post">{% csrf_token %}
 <div class="container">
 
 
@@ -188,6 +188,11 @@
         </table>
     </div>
 </div>
+
+
+  <input type="hidden" name="modelo" value="{{datos.modelo}}">
+  <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+</form>
 
 
 
