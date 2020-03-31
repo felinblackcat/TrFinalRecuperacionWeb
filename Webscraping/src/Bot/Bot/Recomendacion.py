@@ -213,7 +213,9 @@ def pesos():
   df_precision = conexion_bd("Precision")
  #Verificar que el dataframe que almacena la consulta no este vacio
   if not df_precision.empty:
-      
+ #Eliminar las filas de recomendaciones no calificadas por el usuario
+    df_precision = df_precision.dropna(subset['CALIFICACION'])  
+ #calcular una simple presicion de los sistemas individiales basados en las calificaciones positivas o negativas   
     colabora = df_precision[df_precision['SISTEMA_RECOMENDACION'] == "Colaborativo"]
     conten = df_precision[df_precision['SISTEMA_RECOMENDACION'] == "Contenido"]
     lcola = colabora['CALIFICACION'].tolist()
@@ -236,19 +238,21 @@ def pesos():
       wcont= d/len(lconte)
     else:
       wcont = 1
-    
+ # asignar los pesos para cada sistema que será la presicion calculada   
     resultado = [wcol, wcont]
  # en caso de estar vacio se asignan pesos de 1
   else:
     resultado = [1,1]
   return resultado
-#Para el cambio de escala de los criterios de medicion de los RS
+#---------------------------------------------------------------------------------------------------------------
+#Funcion Para el cambio de escala de los criterios de medicion de los RS y que tengan el mismo rango de valores
 def cambio( x, oldMin, oldMax, newMin, newMax ):
   aux = (x-oldMin)*(newMax-newMin)/(oldMax-oldMin)
   result = aux + newMin
   return result
-#----------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------
 
+#---------Funcion principal del sistema de recomendaicon hibrido---------------------
 def recomendacion (usuario):
 #invocar la función pesos
   pesos = pesos()
@@ -256,24 +260,22 @@ def recomendacion (usuario):
   wContenido = pesos[1]
 
 #*****obtener las recomendaciones de los sistemas de recomendacion independientes***
-# Obtener la lista que arroja el sistema colaborativo
+# Obtener la lista que arroja el sistema colaborativo y agregarles la etiqueda del RS
   topColaborativo = colaborativo(usuario)
   topColaborativo = [[x[0], x[1], "Colaborativo"] for x in topColaborativo]
-  #listaColab = [[modelo, calificacion, "colaborativo"] for modelo, calificacion in topColaborativo
-  
+  #Multiplicar las recomendaciones por el peso del sistema colaborativo  
   topColaborativo = [[x[0],x[1]*wColaborativo, x[2]] for x in topColaborativo]
-
+#Obtener la lista que arroja el sistema basado en contenido
   topContenido = contenido()
 #cambiar la escala numerica de la valoracion y agregar la etiquera del RS
-  topContenido = [[x[0], cambio(x[1],0.0,1.0,1.0,5.0), "Contenido"] for x in topColaborativo]
-    
-#  multiplicarl la calificación por el peso del RS
+  topContenido = [[x[0], cambio(x[1],0.0,1.0,1.0,5.0), "Contenido"] for x in topContenido]
+# multiplicarl la calificación por el peso del RS
   topContenido = [[x[0],x[1]*wContenido, x[2]] for x in topContenido]
 
-#Fusionarlas y ordenarlas por calificación
+#Fusionar las recomendaciones y ordenarlas por calificación en orden descendente
   listaB = topColaborativo + topContenido
   listaB.sort(key=lambda cal : cal[1], reverse=True)
-#Eliminar modelos repetidos, conservando el de mayor calificación
+#Eliminar modelos recomendados repetidos, conservando el de mayor calificación
   listaHibrido = []
   modelos =[]
   for i in listaB:
@@ -304,12 +306,13 @@ def recomendacion (usuario):
           print("Failed to insert record into mobile table", error)
 
   finally:
-      #closing database connection.
+      #cerrar la conexion a la base de datos.
       if(connection):
           cursor.close()
           connection.close()
           print("PostgreSQL connection is closed")
-  #*******************************************************************
+  #******************FIN de la Insercion*************************
+
   # Regresar la lista de modelos recomendada
   return modelos
 #***********************************************************************************
