@@ -272,7 +272,7 @@ def recomendacion (usuario):
   #Multiplicar las recomendaciones por el peso del sistema colaborativo  
   topColaborativo = [[x[0],x[1]*wColaborativo, x[2]] for x in topColaborativo]
 #Obtener la lista que arroja el sistema basado en contenido
-  topContenido = contenido()
+  topContenido = contenido(usuario)
 #cambiar la escala numerica de la valoracion y agregar la etiquera del RS
   topContenido = [[x[0], cambio(x[1],0.0,1.0,1.0,5.0), "Contenido"] for x in topContenido]
 # multiplicarl la calificación por el peso del RS
