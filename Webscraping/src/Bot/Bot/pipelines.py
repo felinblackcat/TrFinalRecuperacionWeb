@@ -38,22 +38,25 @@ class BotPipeline(object):
                 
             
        elif(item["url"].find('https://www.walmart.com')>=0):
-           if(item['Modelo']!=' '):
-               
-               try:
-                   self.cantidad = self.cantidad + 1
-                   print(self.cantidad)
-                   sql = "INSERT INTO televisorwalmart(modelo,marca,Precio,tamanopantalla,resolucion,tipodisplay,urlwalmart,calificacionwalmart,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                   values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
-                   self.cursor.execute(sql,values)
-                   self.db_connection.commit()
-        
-               except Exception as error:
-                    self.db_connection.rollback()
-                    print ("Oops! An exception has occured:", error)
-                    print ("Exception TYPE:", type(error))
-               
-               
+           try:
+               if(item['Modelo']!=' '):
+                   
+                   try:
+                       self.cantidad = self.cantidad + 1
+                       print(self.cantidad)
+                       sql = "INSERT INTO televisorwalmart(modelo,marca,Precio,tamanopantalla,resolucion,tipodisplay,urlwalmart,calificacionwalmart,activo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                       values = (item['Modelo'],item['Marca'],item['Precio'],item['TamañoPantalla'],item['Resolucion'],item['TipoDisplay'],item["url"],item['Calificacion'],item["activo"])
+                       self.cursor.execute(sql,values)
+                       self.db_connection.commit()
+            
+                   except Exception as error:
+                        self.db_connection.rollback()
+                        print ("Oops! An exception has occured:", error)
+                        print ("Exception TYPE:", type(error))
+            
+           except Exception:
+               print("Modelo vacio")
+                
        return item
     
     

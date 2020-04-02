@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
-from WebScraping import WebScraping
-from items import BotItem
+from Bot.WebScraping import WebScraping
+from Bot.items import BotItem
 import cfscrape
 from bs4 import BeautifulSoup
 from twisted.internet import reactor
@@ -55,114 +55,91 @@ class TelevisoreswalmartSpider(scrapy.Spider):
         html = BeautifulSoup(res.text, 'html5lib')
         Televisor = BotItem()
         Televisor['url'] = res.meta.get('URL')
-        bandera = True
         try:
-            Stock = html.find('div','text-left AboutProductSection AboutThisItem m-padding-ends').find('div',class_='Specification-container').find('table','table table-striped-odd specification')          
-            
-            Caracteristicas = Stock.find_all('tr') 
-            for Caracteristica in Caracteristicas:
-                dato = Caracteristica.find_all('td')
-                tipo = dato[0].text.strip()               
-                value = dato[1].text.strip()  
-                
-                # print(tipo)
-                
-                if(tipo=="Screen Size"):
-                    
-                    if(not(tipo in self.ValidadorTelevisor)):
-                        
-                        bandera = False
-                        break;
-                    else:   
-                        Televisor['TamañoPantalla']=value.split('"')[0].split('\\')[0]
-                        
-                        
-                elif(tipo=='Resolution'):
-                    
-                    if(not(tipo  in self.ValidadorTelevisor)):
-                        
-                        bandera = False
-                        break;
-                    else:
-                        Televisor['Resolucion']=value
-                elif(tipo=='Is Smart'):
-                    
-                    if(not(tipo in self.ValidadorTelevisor)):
-                        
-                        bandera = False
-                        break;
-                        
-                elif(tipo=="Display Technology"):
-                    
-                    if(not(tipo in self.ValidadorTelevisor)):
-                        
-                        bandera = False
-                        break;
-                    else:
-                        Televisor['TipoDisplay']=value
-                    
-                elif(tipo=="Backlight Type"):
-                    
-                    if(not(tipo in self.ValidadorTelevisor)):
-                        
-                        bandera = False
-                        break;
-                elif(tipo=="Model"):
-                    Televisor['Modelo'] =value
-                    
-                elif(tipo=="Brand"):
-                    Televisor['Marca'] =value
-                
+            caracteristicas = html.find('div',class_="product-specifications").find('table').find('tbody').find_all('tr')
+            #Es televisor si tiene los atributos en la pagina de:
+            #Display Technology,Resolution,Model,Screen Size,Brand,Refresh Rate, si no encuentra alguno 
+            #return no este televisor       
            
-            if(bandera):
-                try:
-                    precio = html.find('span',class_='price display-inline-block arrange-fit price price--stylized').find('span',class_='price-characteristic')['content']
-                    Televisor['Precio'] = float(precio)                    
-                except:
-                    Televisor['Precio']= 0
-                    
-                    
-                try:
-                    puntaje = html.find('span',class_='ReviewsHeader-ratingPrefix font-bold').text.strip()                    
-                    Televisor['Calificacion']=float(puntaje)
-                except:
-                    Televisor['Calificacion']=0
-                Televisor['activo'] = "true"
-                
-                if(not('TamañoPantalla' in Televisor)):  
-                    Televisor['TamañoPantalla'] =' ' 
-                if(not('TipoDisplay' in Televisor)):
-                    Televisor['TipoDisplay']  =' '
-                    
-                if(not('Marca'in Televisor)):
-                    Televisor['Marca']  =' '
-                if(not('Resolucion'in Televisor)):                 
-                    Televisor['Resolucion']=' '
-                    
-                if(not('Modelo'in Televisor)):
-                    try:
-                        Televisor['Modelo']=html.find('div',class_='valign-middle secondary-info-margin-right copy-mini display-inline-block other-info').text.strip()
-                    except:
-                        Televisor['Modelo']=' '
-            else:
-                print('No es televisor',Televisor['url'])
             
-        except:
-           print("fuera de stock: ",Televisor['url']) 
-        
-        
+            if(len(caracteristicas)>0):            
+                for caracteristica in caracteristicas:
+                    try:
+                        datos = caracteristica.find_all('td')
+                        name = datos[0].text.strip()
+                        value = datos[1].text.strip()
+                        
+                        if(name =="Display Technology"):
+                            Televisor['TipoDisplay'] = value
+                            
+                        elif(name =="Resolution"):
+                            Televisor['Resolucion'] = value
+                            
+                        elif(name =="Model"):
+                            Televisor['Modelo'] = value
+                            
+                        elif(name =="Screen Size"):
+                            Televisor['TamañoPantalla'] = value                    
+                            
+                        elif(name =="Brand"):
+                            Televisor['Marca'] = value
+                    except Exception:
+                        er = 0
+                    
+                #AttributeError:
+                try:
+                    Precio = html.find('section',class_='prod-PriceSection').find('div',class_='prod-PriceHero').find('span',class_='price display-inline-block arrange-fit price price--stylized').find('span',class_='visuallyhidden').text.strip()
+                    Televisor['Precio'] = float(Precio.strip('$'))
+                except Exception:
+                    Televisor['Precio'] = 0
+                    #Calificacion = scrapy.Field()    
+                    #activo = scrapy.Field()
+                try:
+                    Calificacion = html.find('span',class_='ReviewsHeader-ratingPrefix font-bold').text.strip()
+                    Televisor['Calificacion'] = float(Calificacion)
+                except Exception:
+                    Televisor['Calificacion']  = 0
+                Televisor['activo'] = "true"
+                try:            
+                    print(Televisor['Modelo'])
+                except:
+                    Televisor['Modelo'] = ' '
+                    print("Televisor sin Modelo")
+                    
+                try:
+                    type(Televisor['TipoDisplay'])
+                except Exception:
+                    Televisor['TipoDisplay'] = ' '
+                
+                try:
+                    type(Televisor['Resolucion'])
+                except Exception:
+                    Televisor['Resolucion'] = ' '
+                    
+                try:
+                    type(Televisor['TamañoPantalla'])
+                    
+                except Exception:
+                    Televisor['TamañoPantalla'] = ' '
+                    
+                try:
+                    type(Televisor['Marca'])
+                except Exception:
+                    Televisor['Marca'] = ' '
+                
+                print(Televisor)
+            
+                
+                
+            else:
+                print("No es televisor.")
+        except AttributeError:
+            #Televisor['Modelo'] = ' '
+            print("Error inesperado")
+            
         yield Televisor    
   
-'''
-settings = get_project_settings()
-#crawler = Crawler()
-runner = CrawlerRunner(settings)
 
-d = runner.crawl(TelevisoreswalmartSpider)
-d.addBoth(lambda _: reactor.stop())
-reactor.run() # the script will block here until the crawling is finished
-
-'''
 
 
 
