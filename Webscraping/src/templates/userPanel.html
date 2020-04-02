@@ -12,27 +12,27 @@
 
 {% block tools %}
 
+<li class="nav-item ">
+  <a class="nav-link active text-secondary" href="{% url 'MostrarTelevisores' %}">
+    <span data-feather="tv"></span>
+    Ver Televisores <span class="sr-only">(current)</span>
+  </a>
+</li>
 
-<nav class="navbar bg-dark navbar-dark " >
-      <a class="navbar-brand" href="{% url 'MostrarTelevisores' %}">Ver Televisores</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-    
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="{% url 'VerRecomendaciones' %}">Ver Recomendaciones<span class="sr-only">(current)</span></a>
-          </li>         
-          <li class="nav-item my-2 my-lg-0">
-              <a class="nav-link" href="{% url 'VerPerfilUsuario' %}">Ver Perfil de Usuario</a>
-          </li>
-        </ul>
-        <ul>
+<li class="nav-item">
+  <a class="nav-link active text-secondary" href="{% url 'VerRecomendaciones' %}">
+    <span data-feather="filter"></span>
+    Ver Recomendaciones <span class="sr-only"></span>
+  </a>
+</li>
 
-
-      </div>
-    </nav>
+<li class="nav-item">
+  <a class="nav-link active text-secondary
+  " href="{% url 'VerPerfilUsuario' %}">
+    <span data-feather="trello"></span>
+    Ver Perfil de usuario <span class="sr-only"></span>
+  </a>
+</li>
 
 
 

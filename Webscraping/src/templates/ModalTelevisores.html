@@ -2,6 +2,7 @@
 {%load static%}
 
 {% block content %}
+<h4 align = "center">Modelo: {{datos.modelo}}</h4>
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
 
@@ -143,56 +144,43 @@
 
 
 </style>
-
-
 <form action="{% url 'GuardarCalificacion' %}" method="post">{% csrf_token %}
-<div class="container">
-
-
-    <div class="card">
-        <table class="table table-hover shopping-cart-wrap">
-           
-                <tr>
-                    <th  >Observaciones</th>
-                    <td> 
-                		<p>{{datos.observaciones}}</p> 
-                	</td>
-                     
-                </tr>
-                
-                <tr>
-                    <th  >Link</th>
-                    <td> 
-                		<a  href="{{datos.link1}}" target="_blank"><strong>{{datos.link1}}</strong><br/><strong>{{datos.link2}}</strong></a> 
-                	</td>
-                      
-                </tr>
-                 <tr>
-                    <th >Calificacion</th>
-                    <td> 
-                    
-                        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-                        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-                        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-                        
-                        <div class="container">
-
-   
-                        <input id="input-1" name="input-1" class="rating rating-loading" data-min="0" data-max="5" data-step="1" value="{{datos.calificacion}}">
-                       </div>
-                        
-                        
-                	</td>
-                </tr>
-
-        </table>
+<div class="card w-100">
+    <div class="card-body">
+      <h5 class="card-title">Observaciones</h5>
+      <p class="card-text">{{datos.observaciones}}</p>
     </div>
-</div>
+  </div>
+
+  <div class="card w-100">
+    <div class="card-body">
+      <h5 class="card-title">Link</h5>
+      <p class="card-text"><a  href="{{datos.link1}}" target="_blank"><strong>{{datos.link1}}</strong></a><br>
+                            <a href="{{datos.link2}}" target="_blank"><strong>{{datos.link2}}</strong></a></p>
+    </div>
+  </div>
+
+  <div class="card w-100">
+    <div class="card-body">
+      <h5 class="card-title">Calificación</h5>
+      <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+      <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+      <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+      
+      <div class="container">
+
+
+      <input id="input-1" name="input-1" class="rating rating-loading" data-min="0" data-max="5" data-step="1" value="{{datos.calificacion}}">
+     </div>
+    </div>
+  </div>
 
 
   <input type="hidden" name="modelo" value="{{datos.modelo}}">
   <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+  <a class="btn btn-primary" href="{% url 'MostrarTelevisores' %}">Cancelar</a>
 </form>
+
 
 
 

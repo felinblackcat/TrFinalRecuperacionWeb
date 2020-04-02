@@ -213,11 +213,16 @@ def VerRecomendaciones(request):
     usuario_actual = request.user.username
     query = recomendacion(usuario_actual)
     dicc = {}
+    contador = 0
     for i in query:
-        mod = Precision.objects.all().filter(modelo=i,usuario=usuario_actual).first()
-        if(mod != None):
-            mod = mod.calificacion
-        dicc[i] = mod
+        if contador >9:
+            break
+        else:
+            mod = Precision.objects.all().filter(modelo=i,usuario=usuario_actual).first()
+            if(mod != None):
+                mod = mod.calificacion
+            dicc[i] = mod
+            contador += 1
     context={
             'recomendaciones':dicc
             }
@@ -356,15 +361,14 @@ def RegistrarUsuario(request):
             #        }
             messages.success(request,'El usuario '+request.POST.get('email')+' se ha registrado correctamente')
     
-            return render(request,'index.html')  
+            return render(request,'login.html')  
         
         except IntegrityError:
             #context = {
             #        'mensaje':{'usuario':request.POST.get('email'),'mensaje':'Error usuario ya registrado.'},                    
             #        }
             messages.error(request,'El usuario '+request.POST.get('email')+' ya esta registrado')
-    
-            return render(request,'index.html')      
+            return render(request,'registro.html')      
             
 def deslog(request):
     do_logout(request)
@@ -385,12 +389,12 @@ def Loguearse(request):
             auth_login(request, user)
             if(user.is_superuser):
                 
-                return redirect('AdminPanel')
+                return redirect('GestionTelevisores')
             
             else:
-                return redirect('userPanel')
+                return redirect('MostrarTelevisores')
         else:
-            
+            messages.error(request,'Error de inicio de sesión')
             return redirect('login')
     
     

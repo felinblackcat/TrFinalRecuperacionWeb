@@ -1,6 +1,8 @@
 
 {% extends "adminPanel.html" %}
 {% block content %}
+<h2 align = "center">Gestión Sistema De Recomendación</h2>
+
 <div class="navegacion" >
     <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #4B515D";>
         <a class="navbar-brand" href="{% url 'MostrarRecomendaciones' %}">Mostrar Recomedaciones</a>
@@ -11,7 +13,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'MostrarPresicion' %}">Presicion del sistema</a>
+                    <a class="nav-link" href="{% url 'MostrarPresicion' %}">Precisión del sistema</a>
                 </li>  
                 <li class="nav-item active">
                     <a class="nav-link" href="{% url 'MostarCalificaciones' %}">Mostrar calificaciones</a>

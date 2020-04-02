@@ -1,13 +1,13 @@
 {% extends "userPanel.html" %}
 {% block content %}
 
-
+<h2 align = "center">Ver Perfil de Usuario</h2>
 <table class="table">
 
-Precision: {{datos.precision}}
+<h4>Precision: {{datos.precision}}</h4>
 
 {% for k,v in datos.items %}
-
+    {% if k != 'precision' %}
     <tr>
     
     
@@ -19,7 +19,7 @@ Precision: {{datos.precision}}
     
     
     </tr>
-
+{% endif %}
 {% endfor %}
 
                 

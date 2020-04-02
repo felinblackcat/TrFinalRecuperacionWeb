@@ -1,7 +1,7 @@
 {% extends "userPanel.html" %}
 {% block content %}
 
-
+<h2 align = "center">Ver Recomendaciones</h2>
 <table class="table">
   <thead>
     <tr>
@@ -10,11 +10,7 @@
     </tr>
   </thead>
   <tbody>
- <!-- <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> --> 
-<!--<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>-->
-<!--<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>-->
       {%for modelo,cal in recomendaciones.items%}
-    <form action="{% url 'CalificarRecomendacion' %}" method="post">{% csrf_token %}
     <tr>
       <td>{{modelo}}</td>
       

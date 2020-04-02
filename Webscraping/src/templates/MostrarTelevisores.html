@@ -2,97 +2,47 @@
 {% extends "userPanel.html" %}
 {% block content %}
 
+<h2 align = "center">Ver televisores</h2>
 
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
-<style type="text/css">
-.param {
-    margin-bottom: 7px;
-    line-height: 1.4;
-}
-.param-inline dt {
-    display: inline-block;
-}
-.param dt {
-    margin: 0;
-    margin-right: 7px;
-    font-weight: 600;
-}
-.param-inline dd {
-    vertical-align: baseline;
-    display: inline-block;
-}
-
-.param dd {
-    margin: 0;
-    vertical-align: baseline;
-} 
-
-.shopping-cart-wrap .price {
-    color: #007bff;
-    font-size: 18px;
-    font-weight: bold;
-    margin-right: 5px;
-    display: block;
-}
-var {
-    font-style: normal;
-}
-
-.media img {
-    margin-right: 1rem;
-}
-.img-sm {
-    width: 90px;
-    max-height: 75px;
-    object-fit: cover;
-}
-</style>
-
-
-
-<div class="container">
-
-
-    <div class="card">
-        <table class="table table-hover shopping-cart-wrap">
-            <thead class="text-muted">
-                <tr>
-                      <th scope="col" >Modelo</th>
-                      <th scope="col">Marca</th>
-                      <th scope="col" >Tamaño</th>
-                      <th scope="col" >Resolución</th>
-                      <th scope="col" >Tipo Display</th>
-                      <th scope="col" >Precio</th>
-                      <th scope="col">Calificación</th>
-                      <th scope="col" width=120>Ver</th>
-                  
-                </tr>
-            </thead>
-            <tbody>
-            
-            {%for televisor in ListaTelevisores%}
+<div class="table-responsive">
+    <table class="table table-striped table-sm">
+      <thead>
+        <tr>
+          <th>Modelo</th>
+          <th>Marca</th>
+          <th>Tamaño</th>
+          <th>resolucion</th>
+          <th>tipo display</th>
+          <th>Precio</th>
+          <th>Calificación</th>
+          <th>Ver</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        {%for televisor in ListaTelevisores%}
             
                 <tr> 
                 	<td> 
-                		<h4>{{televisor.modelo}}</h4> 
+                		{{televisor.modelo}} 
                 	</td>
                 	<td> 
-                		<h4>{{televisor.marca}}</h4>
+                		{{televisor.marca}}
                 	</td>
                 	<td> 
-                    	<h4>{{televisor.tamanopantalla}}</h4>
+                    	{{televisor.tamanopantalla}}
                 	</td>
                 	<td> 
-                		<h4>{{televisor.resolucion}}</h4>
+                		{{televisor.resolucion}}
                 	</td>
                 	<td> 
-                		<h4>{{televisor.tipodisplay}}</h4>
+                		{{televisor.tipodisplay}}
                 	</td>
                 	<td> 
-                		<h4>{{televisor.precio}}</h4>
+                		{{televisor.precio}}
                 	</td>
                 	<td> 
-                		<h4>{{televisor.calificacion__calificacionusuario}}</h4>
+                		{{televisor.calificacion__calificacionusuario}}
                 	</td>
                 	<td> 
                 		
@@ -104,7 +54,7 @@ var {
                             <input type="hidden" name="link2" value="{{televisor.urlbb}}">
                           <input type="hidden" name="calificacion" value="{{televisor.calificacion__calificacionusuario}}">
                           <input type="hidden" name="observaciones" value="{{televisor.observaciones}}">
-                          <button type="submit" class="btn btn-primary">Ver links o calificar</button>
+                          <button type="submit" class="btn btn-primary">Ver Links o Calificar</button>
                           
                         </form>
                 		
@@ -112,15 +62,13 @@ var {
                 	
                 </tr>
                 
-                <div class="modal fade" id="edicion" role="dialog">
-                </div>
+                
                 
                 {% endfor %}
-            
-            </tbody>
-        </table>
-    </div>
-</div>
+        
+      </tbody>
+    </table>
+  </div>
 
 
 

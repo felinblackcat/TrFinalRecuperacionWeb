@@ -1,15 +1,17 @@
 {% extends "adminPanel.html" %}
 {% block content %}
 
+<h2 align = "center">Gestion Televisores</h2>
+
 <div class="navegacion" >
-    <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #4B515D";>
-        <a class="navbar-brand" href="{% url 'ListarTelevisores' %}">Listar Televisores</a>
+    <nav class="navbar navbar-expand-lg navbar-dark " style="background-color: #4B515D";>
+        <a class="navbar text-light" href="{% url 'ListarTelevisores' %}">Listar Televisores</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
     
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
+            <ul class="navbar-nav mr-auto text-light">
                 <li class="nav-item active">
                     <a class="nav-link" href="{% url 'EstadisticasTelevisores' %}">Estadisticas televisores<span class="sr-only">(current)</span></a>
                 </li>         
@@ -24,7 +26,11 @@
 </div>   
 
 
-<div class="content2" >
+
+
+
+
+<div class="content2" ></div>
  {% block contentTelevisor %}
     
     {% endblock %}

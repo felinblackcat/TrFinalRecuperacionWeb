@@ -8,17 +8,26 @@
 
 
 {% block content %}
-<h1>{{mensaje.usuario}} {{mensaje.mensaje}}</h1>
-
-{%if messages%}
-    {%for message in messages%}
-        <div class="alert alert-{%if message.tags == 'error' %}danger{%else%}{{ message.tags }}{%endif%}" role="alert">
-          {{ message }}
-        </div>
-    {%endfor%}
-{%endif%}
 
 
+
+<style>
+.center{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 25%;
+height: 30%;}
+
+.left{
+  float:inline-start;
+}
+
+</style>
+<img src="{% static 'Recuperacion\img\logo.png' %}" width="226" height="223"  alt="" class="center">
+<h1 align="center">SISTEMA DE RECOMENDACIÓN DE TELEVISORES</h1>
+
+<h3 align="center"> Inicia sesión o registrate </h3>
 
 
 
@@ -28,4 +37,7 @@
 
 
 {% endblock%}
-{% block tools %}Herramientas de inicio{% endblock %}
+{% block tools %}
+
+
+{% endblock %}
