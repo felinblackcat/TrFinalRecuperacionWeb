@@ -92,7 +92,7 @@ def CalificarRecomendacion(request):
 @csrf_exempt
 def MostarCalificaciones(request):
         Query=Calificacion.objects.all().order_by('correo').values()
-    
+        print(Query)
         context = {
                         'ListaCalificaiones':Query,                    
                         }

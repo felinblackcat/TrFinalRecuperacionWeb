@@ -39,7 +39,6 @@ startScan()
 reactor.run()
 db_connection= psycopg2.connect(user = "postgres",password = "Felingato1992",host = "127.0.0.1",port = "5432",database = "tvrec")
 cursor = db_connection.cursor()
-cursor.callproc('desactivar_items')
 cursor.close()
 db_connection.close()
 

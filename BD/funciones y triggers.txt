@@ -8,46 +8,112 @@ CREATE OR REPLACE FUNCTION comparar_items() RETURNS TRIGGER AS $comparar_items$
 		urlpwalmart text;
 		datos_otra_tablai text := '';
 		calificacion_televisor real;
+		Marcao text := '';
+		precioo real;
+		TAMANOPANTALLAO text := '';
+		RESOLUCIONO text := '';
+		tipodisplayo text := '';
+		consulto text:= '';
 	
 	BEGIN
 		SELECT * into existe from televisor where modelo = NEW.modelo;
 		IF (existe.modelo is NOT null) THEN
+
+			IF (TG_TABLE_NAME = 'televisorbb') THEN
+				tabla_actual := 'www.bestbuy.com';
+				urlpbb := NEW.urlbb;
+				otra_tabla :=  'www.walmart.com';
+				urlpwalmart := existe.urlwalmart;
+				consulto := existe.marca||existe.precio||existe.TAMANOPANTALLA||existe.resolucion||existe.tipodisplay;
+			ELSE
+				tabla_actual := 'Walmart';
+				urlpwalmart := NEW.urlwalmart;
+				otra_tabla :=  'Best buy';
+				urlpbb := existe.urlbb;
+				consulto := existe.datos_otra_tabla;
+			END IF;
 		
-			IF (existe.datos_otra_tabla <> (NEW.marca||NEW.precio||NEW.TAMANOPANTALLA||NEW.RESOLUCION||NEW.tipodisplay)) THEN 
-		
-				IF (TG_TABLE_NAME = 'televisorbb') THEN
-					tabla_actual := 'www.bestbuy.com';
-					urlpbb := NEW.urlbb;
-					otra_tabla :=  'www.walmart.com';
-					urlpwalmart := existe.urlwalmart;
-				ELSE
-					tabla_actual := 'Walmart';
-					urlpwalmart := NEW.urlwalmart;
-					otra_tabla :=  'Best buy';
-					urlpbb := existe.urlbb;
-				END IF;
+			IF (consulto <> (NEW.marca||NEW.precio||NEW.TAMANOPANTALLA||NEW.RESOLUCION||NEW.tipodisplay)) THEN 
+				RAISE NOTICE 'Entro por lo que son diferentes';  
 				
-				IF (existe.marca <> NEW.marca) THEN
+				
+				Marcao = existe.marca;
+				precioo = existe.precio;
+				TAMANOPANTALLAO = existe.TAMANOPANTALLA;
+				RESOLUCIONO = existe.RESOLUCION;
+				tipodisplayo = existe.tipodisplay;
+				
+
+				IF  (existe.marca = ' ' OR existe.marca = '0') THEN
+					RAISE NOTICE 'marca vacia';  
+					varobservaciones := varobservaciones || 'Único valor de característica para marca,valor faltante en ' || otra_tabla || '\n';
+					Marcao = existe.marca;
+				ELSIF  (NEW.marca = '0' OR NEW.marca = ' ') THEN
+					varobservaciones := varobservaciones || 'Único valor de característica para tamañoPantalla,valor faltante en ' || tabla_actual || '\n';
+					Marcao = NEW.marca;
+				ELSIF (existe.marca <> NEW.marca) THEN
+					RAISE NOTICE 'marca diferente';  
 					varobservaciones := varobservaciones || 'Diferencia de valor encontrado para marca. Se selecciona el valor: ' || existe.marca || '. Posibles valores: ' || existe.marca || ' en ' || otra_tabla || ' y ' || NEW.marca || ' en ' || tabla_actual ||'\n';
-					datos_otra_tablai := datos_otra_tablai||NEW.marca;
+					Marcao = NEW.marca;
+				
 				END IF;
-				IF (existe.precio <> NEW.precio) THEN
+
+
+				IF (existe.precio = 0) THEN
+				RAISE NOTICE 'precio vacio';  
+					varobservaciones := varobservaciones || 'Único valor de característica para precio,valor faltante en ' || otra_tabla || '\n';
+					precioo = existe.precio;
+				ELSIF ( NEW.precio = 0) THEN
+					varobservaciones := varobservaciones || 'Único valor de característica para tamañoPantalla,valor faltante en ' || tabla_actual || '\n';
+					precioo = NEW.precio;
+				ELSIF (existe.precio <> NEW.precio) THEN
+					RAISE NOTICE 'precio diferente';  
 					varobservaciones := varobservaciones || 'Diferencia de valor encontrado para precio. Se selecciona el valor: ' || existe.precio || '. Posibles valores: ' || existe.precio || ' en ' || otra_tabla || ' y ' || NEW.precio || ' en ' || tabla_actual || '\n';
-					datos_otra_tablai := datos_otra_tablai||NEW.precio;
+					precioo = NEW.precio;
 				END IF;
-				IF (existe.TAMANOPANTALLA <> NEW.TAMANOPANTALLA) THEN
+
+				IF  (new.TAMANOPANTALLA = '0' OR NEW.TAMANOPANTALLA = ' ') THEN
+					RAISE NOTICE 'TAMANOPANTALLA vacio';  
+					varobservaciones := varobservaciones || 'Único valor de característica para tamañoPantalla,valor faltante en ' || tabla_actual || '\n';
+					TAMANOPANTALLAO = existe.TAMANOPANTALLA;
+				ELSIF (existe.TAMANOPANTALLA = '0' OR existe.TAMANOPANTALLA = ' ') THEN
+					varobservaciones := varobservaciones || 'Único valor de característica para tamañoPantalla,valor faltante en ' || otra_tabla || '\n';
+					TAMANOPANTALLAO = NEW.TAMANOPANTALLA;
+				ELSIF (existe.TAMANOPANTALLA <> NEW.TAMANOPANTALLA) THEN
+					RAISE NOTICE 'TAMANOPANTALLA diferente';  
 					varobservaciones := varobservaciones || 'Diferencia de valor encontrado para tamañoPantalla. Se selecciona el valor: ' || existe.TAMANOPANTALLA || '. Posibles valores: ' || existe.TAMANOPANTALLA || ' en ' || otra_tabla || ' y ' || NEW.TAMANOPANTALLA || ' en ' || tabla_actual || '\n';
-					datos_otra_tablai := datos_otra_tablai||NEW.TAMANOPANTALLA;
+					TAMANOPANTALLAO = NEW.TAMANOPANTALLA;
 				END IF;
-				IF (existe.RESOLUCION <> NEW.RESOLUCION) THEN
+				IF (existe.RESOLUCION = ' ' OR existe.RESOLUCION = '0') THEN
+					RAISE NOTICE 'resolucion vacia';  
+					varobservaciones := varobservaciones || 'Único valor de característica para resolucion,valor faltante en ' || otra_tabla || '\n';
+					RESOLUCIONO = existe.RESOLUCION;
+				ELSIF (NEW.RESOLUCION = '0' OR NEW.RESOLUCION = ' ') THEN
+					varobservaciones := varobservaciones || 'Único valor de característica para tamañoPantalla,valor faltante en ' || tabla_actual || '\n';
+					RESOLUCIONO = NEW.RESOLUCION;
+				ELSIF (existe.RESOLUCION <> NEW.RESOLUCION) THEN
+					RAISE NOTICE 'resolucion diferente';  
 					varobservaciones := varobservaciones || 'Diferencia de valor encontrado para resolucion. Se selecciona el valor: ' || existe.RESOLUCION || '. Posibles valores: ' || existe.RESOLUCION || ' en ' || otra_tabla || ' y ' || NEW.RESOLUCION || ' en ' || tabla_actual || '\n';
-					datos_otra_tablai := datos_otra_tablai||NEW.RESOLUCION;
+					RESOLUCIONO = NEW.RESOLUCION;
+				
 				END IF;
-				IF (existe.tipodisplay <> NEW.tipodisplay) THEN
+				IF (existe.tipodisplay = ' ' OR existe.tipodisplay = '0') THEN
+					RAISE NOTICE 'tipodisplay vacio';  
+					varobservaciones := varobservaciones || 'Único valor de característica para tipodisplay,valor faltante en ' || otra_tabla || '\n';
+					tipodisplayo = existe.tipodisplay;
+				ELSIF (NEW.tipodisplay = '0' OR NEW.tipodisplay = ' ') THEN
+					varobservaciones := varobservaciones || 'Único valor de característica para tamañoPantalla,valor faltante en ' || tabla_actual || '\n';
+					tipodisplayo = NEW.tipodisplay;
+				ELSIF (existe.tipodisplay <> NEW.tipodisplay) THEN
+					RAISE NOTICE 'tipodisplay diferente';  
 					varobservaciones := varobservaciones || 'Diferencia de valor encontrado para tipoDisplay. Se selecciona el valor: ' || existe.tipodisplay|| '. Posibles valores: ' || existe.tipodisplay || ' en ' || otra_tabla || ' y ' || NEW.tipodisplay || ' en ' || tabla_actual || '\n';
-					datos_otra_tablai := datos_otra_tablai||NEW.tipodisplay;
+					tipodisplayo = NEW.tipodisplay;
+				
 				END IF;
+				datos_otra_tablai = Marcao||precioo||TAMANOPANTALLAO||RESOLUCIONO||tipodisplayo;
 				update  televisor set observaciones = existe.observaciones || varobservaciones, urlbb = urlpbb, urlwalmart = urlpwalmart,datos_otra_tabla = datos_otra_tablai where modelo = NEW.modelo;
+			ELSE
+			RAISE NOTICE 'No son diferentes';  
 			END IF;
 
 		ELSE
